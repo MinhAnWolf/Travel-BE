@@ -1,5 +1,8 @@
 package com.vocation.travel.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
@@ -8,6 +11,9 @@ import jakarta.persistence.Id;
  *
  * @author Minh An
  * */
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 @Entity(name = "province")
 public class Province {
     @Id
