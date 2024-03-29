@@ -1,7 +1,12 @@
 package com.vocation.travel.model;
 
 import com.vocation.travel.entity.User;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,7 +17,8 @@ import java.util.Collection;
  *
  * @author Minh An
  * */
-@Data
+@Getter
+@Setter
 public class AuthUser extends User implements UserDetails {
     private final User user;
 
@@ -25,12 +31,12 @@ public class AuthUser extends User implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
+    public @NonNull String getPassword() {
         return user.getPassword();
     }
 
     @Override
-    public String getUsername() {
+    public @NonNull String getUsername() {
         return user.getUsername();
     }
 

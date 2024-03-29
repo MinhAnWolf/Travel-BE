@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
  * */
 @SuppressWarnings("ALL")
 @Log4j2
+@Service
 public class AuthService {
     @Autowired
     private JwtEncoder jwtEncoder;

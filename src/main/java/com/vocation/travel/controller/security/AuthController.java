@@ -1,11 +1,22 @@
 package com.vocation.travel.controller.security;
 
 import com.vocation.travel.common.constant.ApiConstant;
+import com.vocation.travel.dto.AuthDTO.LoginRequest;
+import com.vocation.travel.security.AuthenticationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(ApiConstant.API_AUTH)
 public class AuthController {
-
+  @Autowired
+  private AuthenticationService loginService;
+  @PostMapping(ApiConstant.API_LOGIN)
+  public ResponseEntity<?> login(@RequestBody LoginRequest userLogin) {
+    return ResponseEntity.ok(loginService.login(userLogin));
+  }
 }

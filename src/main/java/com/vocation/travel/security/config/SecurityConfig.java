@@ -6,6 +6,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.vocation.travel.security.AuthenticationFailureHandler;
 import com.vocation.travel.security.JpaUserDetailsService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,9 @@ public class SecurityConfig {
     @Autowired
     private JpaUserDetailsService userDetailsService;
 
+    @Autowired
+    private AuthenticationFailureHandler authenticationFailureHandler;
+
     /**
      * Set value provider manager security.
      *
@@ -66,14 +70,15 @@ public class SecurityConfig {
                 .csrf(csrf -> {csrf.disable();})
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/api/v1/travel/login").permitAll();
-                    auth.requestMatchers("/api/v1/travel/register").permitAll();
+                    auth.requestMatchers("/auth/login").permitAll();
+                    auth.requestMatchers("/auth/register").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt -> jwt.decoder(jwtDecoder()))))
                 .userDetailsService(userDetailsService)
                 .httpBasic(Customizer.withDefaults())
+                .exceptionHandling(e -> e.authenticationEntryPoint(authenticationFailureHandler))
                 .build();
     }
 
