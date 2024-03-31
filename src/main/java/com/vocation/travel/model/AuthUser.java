@@ -59,4 +59,13 @@ public class AuthUser extends User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    @Override
+    public String getUserId() {
+        return super.getUserId();
+    }
+
+    public User getUser() {
+        return user;
+    }
 }
