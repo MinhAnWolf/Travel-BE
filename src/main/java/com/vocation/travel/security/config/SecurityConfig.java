@@ -72,7 +72,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
         return http
-                .addFilterBefore(new FilterService(), UsernamePasswordAuthenticationFilter.class)
+//                .addFilterAfter(new FilterService(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/*").permitAll();
                     auth.anyRequest().authenticated();
@@ -119,4 +119,13 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
+//    @Bean
+//    public FilterRegistrationBean<FilterService> filterRegistrationBean() {
+//        FilterRegistrationBean<FilterService> registrationBean = new FilterRegistrationBean<>();
+//        registrationBean.setFilter(new FilterService());
+//        registrationBean.addUrlPatterns("/*"); // Chỉ định URL mà filter sẽ được áp dụng
+//        return registrationBean;
+//    }
 }

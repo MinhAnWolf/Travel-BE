@@ -47,6 +47,8 @@ public class User {
   @NonNull
   private String role;
 
+  private String rememberPassword;
+
   @NonNull
   public String getUsername() {
     return username;
