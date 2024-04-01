@@ -23,12 +23,12 @@ public class FilterService extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authorization = request.getHeader(AUTHORIZATION);
-        String rf = Utils.getCookieOnly(REFRESH, request.getCookies());
+        String tokenAuthorization = request.getHeader(AUTHORIZATION);
+        String tokenRf = request.getHeader(REFRESH);
         String uriLogin = "/api/v1/travel/auth/login";
         boolean checkLoginUrl = request.getRequestURI().equals(uriLogin);
 
-        if (Utils.isEmpty(authorization) && Utils.isEmpty(rf) && !checkLoginUrl) {
+        if (Utils.isEmpty(tokenAuthorization) && Utils.isEmpty(tokenRf) && !checkLoginUrl) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -38,8 +38,7 @@ public class FilterService extends OncePerRequestFilter {
             return;
         }
 
-        // Check token
-        Map<String, String> listToken =  tokenService.refeshToken(Utils.getCookieOnly(REFRESH, request.getCookies()), authorization);
+        Map<String, String> listToken =  tokenService.refeshToken(tokenRf, tokenAuthorization);
         if (!Utils.objNull(listToken)) {
             addHeader(listToken, response);
         }

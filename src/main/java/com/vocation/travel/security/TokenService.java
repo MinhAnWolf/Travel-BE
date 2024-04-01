@@ -69,7 +69,7 @@ public class TokenService {
      * @param authentication Authentication
      * @return String
      * */
-    public String generateTokenExpires(Collection<? extends GrantedAuthority> roles,
+    public String refreshTokenExpires(Collection<? extends GrantedAuthority> roles,
                                        String idUser, String username, int TimeExpires) {
         Instant now = Instant.now();
 
@@ -78,7 +78,7 @@ public class TokenService {
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("Bearer")
-                .expiresAt(now.plus(TimeExpires, ChronoUnit.HOURS))
+                .expiresAt(now.plus(TimeExpires, ChronoUnit.MINUTES))
                 .subject(username)
                 .claim("scope", scope)
                 .claim("id", idUser)
@@ -105,10 +105,9 @@ public class TokenService {
      * */
     public boolean validateToken(String token) {
         Jwt jwt = deJwt(token);
-        //check expires
         Instant expiresAt = jwt.getExpiresAt();
         if (expiresAt == null) {
-            return false; // If expiration time is not provided, JWT is considered as not expired
+            return false;
         }
         return expiresAt.isBefore(Instant.now());
     }
@@ -124,23 +123,23 @@ public class TokenService {
         String sub = "sub";
         String id = "id";
         String scope = "scope";
-//        naturalVersionToken(refeshToken);
-        naturalVersionToken(atToken);
+        refeshToken = naturalVersionToken(refeshToken);
+        atToken = naturalVersionToken(atToken);
         // check refesh token
-//        if (validateToken(refeshToken)) {
-//            Jwt jwt = deJwt(refeshToken);
-//            Collection<? extends GrantedAuthority> roles =
-//                    (Collection<? extends GrantedAuthority>) jwt.getClaims().get(scope);
-//            listToken.put("rf", generateTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
-//                String.valueOf(jwt.getClaims().get(sub)), TimeConstant.minuteRf));
-//        }
+        if (validateToken(refeshToken)) {
+            Jwt jwt = deJwt(refeshToken);
+            Collection<? extends GrantedAuthority> roles =
+                    (Collection<? extends GrantedAuthority>) jwt.getClaims().get(scope);
+            listToken.put("rf", refreshTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
+                String.valueOf(jwt.getClaims().get(sub)), TimeConstant.minuteRf));
+        }
 
         // check access token
         if (validateToken(atToken)) {
             Jwt jwt = deJwt(atToken);
             Collection<? extends GrantedAuthority> roles =
                     (Collection<? extends GrantedAuthority>) jwt.getClaims().get(scope);
-            listToken.put("Authorization", generateTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
+            listToken.put("Authorization", refreshTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
                     String.valueOf(jwt.getClaims().get(sub)), TimeConstant.minuteAt));
         }
         return listToken;
