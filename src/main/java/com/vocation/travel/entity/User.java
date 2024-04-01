@@ -1,8 +1,6 @@
 package com.vocation.travel.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -44,8 +42,12 @@ public class User {
   private String email;
 
   @NonNull
-  @JsonIgnore
   private String password;
+
+  @NonNull
+  private String role;
+
+  private String rememberPassword;
 
   @NonNull
   public String getUsername() {
@@ -74,4 +76,11 @@ public class User {
     this.password = password;
   }
 
+  public String getUserId() {
+    return userId;
+  }
+
+  public void setUserId(String userId) {
+    this.userId = userId;
+  }
 }

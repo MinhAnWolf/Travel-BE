@@ -1,5 +1,6 @@
 package com.vocation.travel.security;
 
+import com.vocation.travel.common.constant.TimeConstant;
 import com.vocation.travel.dto.AuthDTO.LoginRequest;
 import com.vocation.travel.dto.AuthDTO.Response;
 import com.vocation.travel.dto.UsersDTO;
@@ -31,7 +32,7 @@ public class AuthenticationService {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     @Autowired
-    private AuthService authService;
+    private TokenService tokenService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -54,8 +55,10 @@ public class AuthenticationService {
             userLogin.username(), userLogin.password()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         AuthUser userDetails = (AuthUser) authentication.getPrincipal();
-        String token = authService.generateToken(authentication);
-      return new Response("User logged in successfully", token);
+        String idU = userDetails.getUser().getUserId();
+        String atToken = tokenService.generateToken(authentication, idU, TimeConstant.minuteAt);
+        String rfToken = tokenService.generateToken(authentication, idU, TimeConstant.minuteRf);
+        return new Response("User logged in successfully", atToken, rfToken);
     }
 
     /**
@@ -66,14 +69,14 @@ public class AuthenticationService {
      * */
     public Response register(UsersDTO usersDto) {
         if (checkInputParams(usersDto) || checkExistEmailUserName(usersDto)) {
-            return new Response("Register fail", null);
+            return new Response("Register fail", null, null);
         }
         User user = new User();
         user.setUsername(usersDto.getUsername());
         user.setEmail(usersDto.getEmail());
         user.setPassword(passwordEncoder.encode(usersDto.getPassword()));
         userRepository.save(user);
-        return new Response("Register success", null);
+        return new Response("Register success", null, null);
     }
 
     /**

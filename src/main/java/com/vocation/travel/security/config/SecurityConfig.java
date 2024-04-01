@@ -7,12 +7,15 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.vocation.travel.security.AuthenticationFailureHandler;
+import com.vocation.travel.security.FilterService;
 import com.vocation.travel.security.JpaUserDetailsService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -28,7 +31,12 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -67,15 +75,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
         return http
-                .csrf(csrf -> {csrf.disable();})
-                .cors(cors -> cors.disable())
+//                .addFilterAfter(new FilterService(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/auth/login").permitAll();
-                    auth.requestMatchers("/auth/register").permitAll();
+                    auth.requestMatchers("/auth/*").permitAll();
                     auth.anyRequest().authenticated();
                 })
+                .csrf(csrf -> {csrf.disable();})
+                .cors(cors -> {
+                    cors.configurationSource(request -> {
+                        CorsConfiguration config = new CorsConfiguration();
+                        config.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+                        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+                        config.setAllowedHeaders(Arrays.asList("*"));
+                        return config;
+                    });
+                })
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt -> jwt.decoder(jwtDecoder()))))
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())))
                 .userDetailsService(userDetailsService)
                 .httpBasic(Customizer.withDefaults())
                 .exceptionHandling(e -> e.authenticationEntryPoint(authenticationFailureHandler))
@@ -114,4 +130,13 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
+//    @Bean
+//    public FilterRegistrationBean<FilterService> filterRegistrationBean() {
+//        FilterRegistrationBean<FilterService> registrationBean = new FilterRegistrationBean<>();
+//        registrationBean.setFilter(new FilterService());
+//        registrationBean.addUrlPatterns("/*"); // Chỉ định URL mà filter sẽ được áp dụng
+//        return registrationBean;
+//    }
 }
