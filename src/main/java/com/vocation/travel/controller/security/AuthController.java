@@ -1,8 +1,10 @@
 package com.vocation.travel.controller.security;
 
 import com.vocation.travel.common.constant.ApiConstant;
+import com.vocation.travel.common.constant.CodeConstant;
 import com.vocation.travel.dto.AuthDTO.LoginRequest;
 import com.vocation.travel.dto.UsersDTO;
+import com.vocation.travel.model.BaseResponse;
 import com.vocation.travel.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +24,13 @@ public class AuthController {
     return ResponseEntity.ok(authenticationService.login(userLogin));
   }
 
-  @PostMapping(ApiConstant.API_Register)
+  @PostMapping(ApiConstant.API_REGISTER)
   public ResponseEntity<?> register(@RequestBody UsersDTO usersDto) {
     return ResponseEntity.ok(authenticationService.register(usersDto));
+  }
+
+  @PostMapping(ApiConstant.API_AUTHENTICATION)
+  public ResponseEntity<?> authorization() {
+    return ResponseEntity.ok(new BaseResponse(CodeConstant.SUCCESS, Boolean.TRUE, "Authentication success!"));
   }
 }
