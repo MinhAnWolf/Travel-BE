@@ -31,6 +31,6 @@ public class AuthController {
 
   @PostMapping(ApiConstant.API_AUTHENTICATION)
   public ResponseEntity<?> authorization() {
-    return ResponseEntity.ok(new BaseResponse(CodeConstant.SUCCESS, Boolean.TRUE, "Authentication success!"));
+    return ResponseEntity.ok(Boolean.TRUE);
   }
 }
