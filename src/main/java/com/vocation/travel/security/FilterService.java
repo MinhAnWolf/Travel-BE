@@ -26,20 +26,24 @@ public class FilterService extends OncePerRequestFilter {
         String tokenAuthorization = request.getHeader(AUTHORIZATION);
         String tokenRf = request.getHeader(REFRESH);
         String uriLogin = "/api/v1/travel/auth/login";
+        String uriRegister = "/api/v1/travel/auth/register";
+        String uriAuthentication = "/api/v1/travel/auth/authentication";
         boolean checkLoginUrl = request.getRequestURI().equals(uriLogin);
+        boolean checkRegisterUrl = request.getRequestURI().equals(uriRegister);
+//        boolean checkAuthenticationUrl = request.getRequestURI().equals(uriAuthentication);
 
         if (Utils.isEmpty(tokenAuthorization) && Utils.isEmpty(tokenRf) && !checkLoginUrl) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
-        if (checkLoginUrl) {
+        if (checkLoginUrl || checkRegisterUrl) {
             filterChain.doFilter(request, response);
             return;
         }
 
         Map<String, String> listToken =  tokenService.refeshToken(tokenRf, tokenAuthorization);
-        if (!Utils.objNull(listToken)) {
+        if (!Utils.isNull(listToken) && !listToken.isEmpty()) {
             addHeader(listToken, response);
         }
 

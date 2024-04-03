@@ -16,13 +16,13 @@ public class Utils {
     return value == null || value.isEmpty();
   }
 
-  public static boolean objNull(Object obj) {
+  public static boolean isNull(Object obj) {
     return Objects.isNull(obj);
   }
 
   public static String getCookieOnly(String key, Cookie[] listCookie) {
     String result = null;
-    if (!objNull(listCookie)) {
+    if (!isNull(listCookie)) {
       for (Cookie cookie : listCookie) {
         if (key.equals(cookie.getName()) && cookie.isHttpOnly()) {
           result = cookie.getValue();

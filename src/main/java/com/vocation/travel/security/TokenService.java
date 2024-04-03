@@ -14,8 +14,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -55,7 +57,7 @@ public class TokenService {
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("Bearer")
-                .expiresAt(now.plus(TimeExpires, ChronoUnit.SECONDS))
+                .expiresAt(now.plus(TimeExpires, ChronoUnit.MINUTES))
                 .subject(authentication.getName())
                 .claim("scope", scope)
                 .claim("id", idUser)
@@ -103,7 +105,7 @@ public class TokenService {
      * @param token String
      * @return boolean
      * */
-    public boolean validateToken(String token) {
+    public boolean validateTimeToken(String token) {
         Jwt jwt = deJwt(token);
         Instant expiresAt = jwt.getExpiresAt();
         if (expiresAt == null) {
@@ -126,19 +128,19 @@ public class TokenService {
         refeshToken = naturalVersionToken(refeshToken);
         atToken = naturalVersionToken(atToken);
         // check refesh token
-        if (validateToken(refeshToken)) {
+        if (validateTimeToken(refeshToken)) {
             Jwt jwt = deJwt(refeshToken);
-            Collection<? extends GrantedAuthority> roles =
-                    (Collection<? extends GrantedAuthority>) jwt.getClaims().get(scope);
+            List<String> scopes = (List<String>) jwt.getClaims().get(scope);
+            Collection<GrantedAuthority> roles = convertScope(scopes);
             listToken.put("rf", refreshTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
                 String.valueOf(jwt.getClaims().get(sub)), TimeConstant.minuteRf));
         }
 
         // check access token
-        if (validateToken(atToken)) {
+        if (validateTimeToken(atToken)) {
             Jwt jwt = deJwt(atToken);
-            Collection<? extends GrantedAuthority> roles =
-                    (Collection<? extends GrantedAuthority>) jwt.getClaims().get(scope);
+            List<String> scopes = (List<String>) jwt.getClaims().get(scope);
+            Collection<GrantedAuthority> roles = convertScope(scopes);
             listToken.put("Authorization", refreshTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
                     String.valueOf(jwt.getClaims().get(sub)), TimeConstant.minuteAt));
         }
@@ -156,5 +158,19 @@ public class TokenService {
             return null;
         }
         return token.replace("Bearer ", "");
+    }
+
+    private Collection<GrantedAuthority> convertScope(List<String> scopes) {
+        Collection<GrantedAuthority> roles = new ArrayList<>();
+        for (String roleItem : scopes) {
+            GrantedAuthority grantedAuthority = new GrantedAuthority() {
+                @Override
+                public String getAuthority() {
+                    return roleItem;
+                }
+            };
+            roles.add(grantedAuthority);
+        }
+        return roles;
     }
 }
