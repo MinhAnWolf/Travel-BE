@@ -30,14 +30,14 @@ public class FilterService extends OncePerRequestFilter {
         String uriAuthentication = "/api/v1/travel/auth/authentication";
         boolean checkLoginUrl = request.getRequestURI().equals(uriLogin);
         boolean checkRegisterUrl = request.getRequestURI().equals(uriRegister);
-        boolean checkAuthenticationUrl = request.getRequestURI().equals(uriAuthentication);
+//        boolean checkAuthenticationUrl = request.getRequestURI().equals(uriAuthentication);
 
         if (Utils.isEmpty(tokenAuthorization) && Utils.isEmpty(tokenRf) && !checkLoginUrl) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
-        if (checkLoginUrl || checkRegisterUrl || checkAuthenticationUrl) {
+        if (checkLoginUrl || checkRegisterUrl) {
             filterChain.doFilter(request, response);
             return;
         }
