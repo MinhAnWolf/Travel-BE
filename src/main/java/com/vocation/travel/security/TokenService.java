@@ -1,8 +1,10 @@
 package com.vocation.travel.security;
 
 import com.vocation.travel.common.constant.TimeConstant;
+import com.vocation.travel.entity.User;
 import com.vocation.travel.repository.UserRepository;
 import com.vocation.travel.security.config.RsaKeyConfigProperties;
+import com.vocation.travel.service.UserService;
 import com.vocation.travel.util.Utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +44,9 @@ public class TokenService {
 
     @Autowired
     private RsaKeyConfigProperties rsaKeyConfigProperties;
+
+    @Autowired
+    private UserService userService;
 
     /**
      * Generate token.
@@ -106,12 +112,7 @@ public class TokenService {
      * @return boolean
      * */
     public boolean validateTimeToken(String token) {
-        Jwt jwt = deJwt(token);
-        Instant expiresAt = jwt.getExpiresAt();
-        if (expiresAt == null) {
-            return false;
-        }
-        return expiresAt.isBefore(Instant.now());
+        return deJwt(token).getExpiresAt().isBefore(Instant.now());
     }
 
     /**
@@ -120,7 +121,7 @@ public class TokenService {
      * @param token String
      * @return boolean
      * */
-    public Map<String, String> refeshToken(String refeshToken, String atToken) {
+    public Map<String, String> refeshToken(String refeshToken, String atToken, String userId) {
         Map<String, String> listToken = new HashMap<>();
         String sub = "sub";
         String id = "id";
@@ -128,22 +129,37 @@ public class TokenService {
         refeshToken = naturalVersionToken(refeshToken);
         atToken = naturalVersionToken(atToken);
         // check refesh token
-        if (validateTimeToken(refeshToken)) {
-            Jwt jwt = deJwt(refeshToken);
-            List<String> scopes = (List<String>) jwt.getClaims().get(scope);
-            Collection<GrantedAuthority> roles = convertScope(scopes);
-            listToken.put("rf", refreshTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
-                String.valueOf(jwt.getClaims().get(sub)), TimeConstant.minuteRf));
+        try {
+            if (validateTimeToken(refeshToken)) {
+                Jwt jwt = deJwt(refeshToken);
+                Collection<GrantedAuthority> roles = convertScope((List<String>) jwt.getClaims().get(scope));
+                listToken.put("rf", refreshTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
+                    String.valueOf(jwt.getClaims().get(sub)), TimeConstant.minuteRf));
+            }
+        } catch (JwtValidationException e) {
+            if (e.getMessage().contains("expired")) {
+                User user = userService.getUserById(id);
+                listToken.put("rf", refreshTokenExpires(null, user.getUserId(),
+                    user.getUsername(), TimeConstant.minuteRf));
+            }
         }
 
         // check access token
-        if (validateTimeToken(atToken)) {
-            Jwt jwt = deJwt(atToken);
-            List<String> scopes = (List<String>) jwt.getClaims().get(scope);
-            Collection<GrantedAuthority> roles = convertScope(scopes);
-            listToken.put("Authorization", refreshTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
+        try {
+            if (validateTimeToken(atToken)) {
+                Jwt jwt = deJwt(atToken);
+                Collection<GrantedAuthority> roles = convertScope((List<String>) jwt.getClaims().get(scope));
+                listToken.put("Authorization", refreshTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
                     String.valueOf(jwt.getClaims().get(sub)), TimeConstant.minuteAt));
+            }
+        } catch (JwtValidationException e) {
+            if (e.getMessage().contains("expired")) {
+                User user = userService.getUserById(id);
+                listToken.put("Authorization", refreshTokenExpires(null, user.getUserId(),
+                        user.getUsername(), TimeConstant.minuteAt));
+            }
         }
+
         return listToken;
     }
 
