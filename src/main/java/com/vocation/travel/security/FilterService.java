@@ -18,19 +18,21 @@ public class FilterService extends OncePerRequestFilter {
     private final String REFRESH = "rf";
     private final String AUTHORIZATION = "Authorization";
 
+    private final String UID = "c_id";
+
     @Autowired
     private TokenService tokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
         String tokenAuthorization = request.getHeader(AUTHORIZATION);
         String tokenRf = request.getHeader(REFRESH);
+        String uid = request.getHeader(UID);
         String uriLogin = "/api/v1/travel/auth/login";
         String uriRegister = "/api/v1/travel/auth/register";
-        String uriAuthentication = "/api/v1/travel/auth/authentication";
         boolean checkLoginUrl = request.getRequestURI().equals(uriLogin);
         boolean checkRegisterUrl = request.getRequestURI().equals(uriRegister);
-//        boolean checkAuthenticationUrl = request.getRequestURI().equals(uriAuthentication);
 
         if (Utils.isEmpty(tokenAuthorization) && Utils.isEmpty(tokenRf) && !checkLoginUrl) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -42,20 +44,21 @@ public class FilterService extends OncePerRequestFilter {
             return;
         }
 
-        Map<String, String> listToken =  tokenService.refeshToken(tokenRf, tokenAuthorization);
+        Map<String, String> listToken =  tokenService.refeshToken(tokenRf, tokenAuthorization, uid);
         if (!Utils.isNull(listToken) && !listToken.isEmpty()) {
-            addHeader(listToken, response);
+            addHeader(listToken, uid, response);
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private void addHeader(Map<String, String> listToken, HttpServletResponse response) {
+    private void addHeader(Map<String, String> listToken, String uid, HttpServletResponse response) {
         if (Utils.isEmpty(listToken.get(REFRESH))) {
             response.setHeader(REFRESH, listToken.get(REFRESH));
         } else if(Utils.isEmpty(listToken.get(AUTHORIZATION))) {
             response.setHeader(AUTHORIZATION, listToken.get(AUTHORIZATION));
         }
+        response.setHeader("c_id", uid);
         response.setContentType("application/json");
     }
 
