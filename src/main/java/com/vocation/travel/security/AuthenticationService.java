@@ -58,7 +58,7 @@ public class AuthenticationService {
         String idU = userDetails.getUser().getUserId();
         String atToken = tokenService.generateToken(authentication, idU, TimeConstant.minuteAt);
         String rfToken = tokenService.generateToken(authentication, idU, TimeConstant.minuteRf);
-        return new Response("User logged in successfully", atToken, rfToken);
+        return new Response("User logged in successfully", atToken, rfToken, idU);
     }
 
     /**
@@ -69,14 +69,14 @@ public class AuthenticationService {
      * */
     public Response register(UsersDTO usersDto) {
         if (checkInputParams(usersDto) || checkExistEmailUserName(usersDto)) {
-            return new Response("Register fail", null, null);
+            return new Response("Register fail", null, null, null);
         }
         User user = new User();
         user.setUsername(usersDto.getUsername());
         user.setEmail(usersDto.getEmail());
         user.setPassword(passwordEncoder.encode(usersDto.getPassword()));
         userRepository.save(user);
-        return new Response("Register success", null, null);
+        return new Response("Register success", null, null, null);
     }
 
     /**

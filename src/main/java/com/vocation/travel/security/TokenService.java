@@ -139,8 +139,8 @@ public class TokenService {
         } catch (JwtValidationException e) {
             if (e.getMessage().contains("expired")) {
                 User user = userService.getUserById(id);
-                listToken.put("rf", refreshTokenExpires(user.getRole(), String.valueOf(jwt.getClaims().get(id)),
-                    String.valueOf(jwt.getClaims().get(sub)), TimeConstant.minuteRf));
+                listToken.put("rf", refreshTokenExpires(null, user.getUserId(),
+                    user.getUsername(), TimeConstant.minuteRf));
             }
         }
 
@@ -154,8 +154,9 @@ public class TokenService {
             }
         } catch (JwtValidationException e) {
             if (e.getMessage().contains("expired")) {
-                listToken.put("Authorization", refreshTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
-                    String.valueOf(jwt.getClaims().get(sub)), TimeConstant.minuteAt));
+                User user = userService.getUserById(id);
+                listToken.put("Authorization", refreshTokenExpires(null, user.getUserId(),
+                        user.getUsername(), TimeConstant.minuteAt));
             }
         }
 
@@ -188,6 +189,4 @@ public class TokenService {
         }
         return roles;
     }
-
-    private User
 }
