@@ -22,3 +22,4 @@ CMD ["sh", "./run.sh"]
 
 #docker run -p 8080:8080 individual:1.0
 #docker build -t individual:1.0 .
+# test
