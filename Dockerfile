@@ -1,4 +1,3 @@
-FROM openjdk:17-oracle
 FROM arm64v8/alpine
 
 # Cài đặt các công cụ cần thiết (curl, unzip)
