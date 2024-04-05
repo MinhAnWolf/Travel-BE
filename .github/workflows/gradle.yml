@@ -70,4 +70,4 @@ jobs:
         IMAGE_NAME="travel/image:$COMMIT_ID"
         docker build . -t minhan09/travel
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker push minhan09/travel:$IMAGE_NAME
+        docker push $IMAGE_NAME
