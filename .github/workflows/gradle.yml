@@ -66,8 +66,8 @@ jobs:
 
     - name: Build & push Docker image
       run: |
-        # COMMIT_ID=$(git rev-parse --short ${{ github.sha }})
-        # IMAGE_NAME="individual/image:$COMMIT_ID"
-        docker build . -t minhan09/individual
+        COMMIT_ID=$(git rev-parse --short ${{ github.sha }})
+        IMAGE_NAME="travel/image:$COMMIT_ID"
+        docker build . -t minhan09/travel
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker push minhan09/travel
+        docker push minhan09/travel:$IMAGE_NAME
