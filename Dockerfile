@@ -1,5 +1,5 @@
 FROM openjdk:17-oracle
-FROM alpine
+FROM arm64v8/alpine
 
 # Cài đặt các công cụ cần thiết (curl, unzip)
 RUN apk update && apk add --no-cache curl unzip
