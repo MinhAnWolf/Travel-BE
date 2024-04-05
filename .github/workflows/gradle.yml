@@ -68,6 +68,6 @@ jobs:
       run: |
         COMMIT_ID=$(git rev-parse --short ${{ github.sha }})
         IMAGE_NAME="minhan09/travel:$COMMIT_ID"
-        docker build . -t minhan09/travel
+        docker build . -t $IMAGE_NAME
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
         docker push $IMAGE_NAME
