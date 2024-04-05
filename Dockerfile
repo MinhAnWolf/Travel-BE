@@ -1,4 +1,7 @@
 FROM arm64v8/alpine
+FROM openjdk:17-oracle
+
+RUN apt-get install -y qemu qemu-user-static
 
 # Cài đặt các công cụ cần thiết (curl, unzip)
 RUN apk update && apk add --no-cache curl unzip
