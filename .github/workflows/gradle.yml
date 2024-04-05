@@ -70,4 +70,4 @@ jobs:
         # IMAGE_NAME="individual/image:$COMMIT_ID"
         docker build . -t minhan09/individual
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker push minhan09/individual
+        docker push minhan09/travel
