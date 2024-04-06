@@ -33,13 +33,16 @@ public class FilterService extends OncePerRequestFilter {
         String uriRegister = "/api/v1/travel/auth/register";
         boolean checkLoginUrl = request.getRequestURI().equals(uriLogin);
         boolean checkRegisterUrl = request.getRequestURI().equals(uriRegister);
+        boolean checkRequestSwagger = swaggerPassFilter(request.getRequestURI());
 
-        if (Utils.isEmpty(tokenAuthorization) && Utils.isEmpty(tokenRf) && !checkLoginUrl) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+        if (!checkRequestSwagger) {
+            if (Utils.isEmpty(tokenAuthorization) && Utils.isEmpty(tokenRf) && !checkLoginUrl) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
         }
 
-        if (checkLoginUrl || checkRegisterUrl) {
+        if (checkLoginUrl || checkRegisterUrl || checkRequestSwagger) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -62,5 +65,7 @@ public class FilterService extends OncePerRequestFilter {
         response.setContentType("application/json");
     }
 
-
+    private boolean swaggerPassFilter(String requestUrl) {
+        return requestUrl.contains("swagger") || requestUrl.contains("api-docs");
+    }
 }
