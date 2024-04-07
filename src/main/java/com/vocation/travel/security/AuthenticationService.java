@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
  * @author Minh An
  * */
 @Service
-@Log4j2
 public class AuthenticationService {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 

@@ -1,10 +1,8 @@
 package com.vocation.travel.controller.security;
 
 import com.vocation.travel.common.constant.ApiConstant;
-import com.vocation.travel.common.constant.CodeConstant;
 import com.vocation.travel.dto.AuthDTO.LoginRequest;
 import com.vocation.travel.dto.UsersDTO;
-import com.vocation.travel.model.BaseResponse;
 import com.vocation.travel.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
