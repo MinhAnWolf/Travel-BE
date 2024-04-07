@@ -12,13 +12,9 @@ import com.vocation.travel.model.dto.WardDTO;
 import com.vocation.travel.repository.DistrictRepository;
 import com.vocation.travel.repository.ProvinceRepository;
 import com.vocation.travel.repository.WardRepository;
-import com.vocation.travel.security.AuthenticationService;
 import com.vocation.travel.service.AddressService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
