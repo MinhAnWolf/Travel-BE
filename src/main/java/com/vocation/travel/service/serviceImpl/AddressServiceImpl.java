@@ -1,8 +1,11 @@
 package com.vocation.travel.service.serviceImpl;
 
+import com.vocation.travel.common.Log;
+import com.vocation.travel.common.constant.CodeConstant;
 import com.vocation.travel.entity.District;
 import com.vocation.travel.entity.Province;
 import com.vocation.travel.entity.Ward;
+import com.vocation.travel.model.BaseResponse;
 import com.vocation.travel.model.dto.DistrictDTO;
 import com.vocation.travel.model.dto.ProvinceDTO;
 import com.vocation.travel.model.dto.WardDTO;
@@ -21,8 +24,6 @@ import java.util.List;
 
 @Service
 public class AddressServiceImpl implements AddressService {
-    private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
-
     @Autowired
     private DistrictRepository districtRepository;
 
@@ -32,31 +33,63 @@ public class AddressServiceImpl implements AddressService {
     @Autowired
     private ProvinceRepository provinceRepository;
 
+    private final static String SERVICE_NAME = "AddressService";
+
     @Override
-    public List<DistrictDTO> listDistrict() {
+    public BaseResponse listDistrict() {
+        final String METHOD_NAME = "listDistrict";
+        Log.startLog(SERVICE_NAME, METHOD_NAME);
         List<District> districts = districtRepository.findAll();
+        BaseResponse response;
         if (districts.isEmpty()) {
-           return null;
+            response = new BaseResponse(CodeConstant.FAIL, null, "Get district fail");
+            Log.debugLog(response);
+            Log.endLog(SERVICE_NAME, METHOD_NAME);
+           return response;
         }
-        return convertDistrict(districts);
+        List<DistrictDTO> districtDtoList = convertDistrict(districts);
+        response = new BaseResponse(CodeConstant.SUCCESS, districtDtoList, "Get district success");
+        Log.debugLog(response);
+        Log.endLog(SERVICE_NAME, METHOD_NAME);
+        return response;
     }
 
     @Override
-    public List<ProvinceDTO> listProvince() {
+    public BaseResponse listProvince() {
+        final String METHOD_NAME = "listProvince";
+        Log.startLog(SERVICE_NAME, METHOD_NAME);
         List<Province> province = provinceRepository.findAll();
+        BaseResponse response;
         if (province.isEmpty()) {
-            return null;
+            response = new BaseResponse(CodeConstant.SUCCESS, null, "Get province fail");
+            Log.debugLog(response);
+            Log.endLog(SERVICE_NAME, METHOD_NAME);
+            return response;
         }
-        return convertProvince(province);
+        List<ProvinceDTO> provinceDtoList = convertProvince(province);
+        response = new BaseResponse(CodeConstant.SUCCESS, provinceDtoList, "Get province success");
+        Log.debugLog(response);
+        Log.endLog(SERVICE_NAME, METHOD_NAME);
+        return response;
     }
 
     @Override
-    public List<WardDTO> listWard() {
+    public BaseResponse listWard() {
+        final String METHOD_NAME = "listWard";
+        Log.startLog(SERVICE_NAME, METHOD_NAME);
         List<Ward> wards = wardRepository.findAll();
+        BaseResponse response;
         if (wards.isEmpty()) {
-            return null;
+            response = new BaseResponse(CodeConstant.SUCCESS, null, "Get ward fail");
+            Log.debugLog(response);
+            Log.endLog(SERVICE_NAME, METHOD_NAME);
+            return response;
         }
-        return convertWard(wards);
+        List<WardDTO> wardDtoList = convertWard(wards);
+        response = new BaseResponse(CodeConstant.SUCCESS, wardDtoList, "Get ward success");
+        Log.debugLog(response);
+        Log.endLog(SERVICE_NAME, METHOD_NAME);
+        return response;
     }
 
     private List<DistrictDTO> convertDistrict(List<District> districts) {
@@ -98,7 +131,7 @@ public class AddressServiceImpl implements AddressService {
             wardDto.setProvinceName(ward.getProvince_name());
             wardDto.setDistrictName(ward.getDistrict_name());
             list.add(wardDto);
-            }
+        }
        return list;
     }
 }
