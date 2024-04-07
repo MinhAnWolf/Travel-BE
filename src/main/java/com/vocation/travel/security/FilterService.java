@@ -1,6 +1,5 @@
 package com.vocation.travel.security;
 
-
 import com.vocation.travel.util.Utils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,14 +17,19 @@ public class FilterService extends OncePerRequestFilter {
     private final String REFRESH = "rf";
     private final String AUTHORIZATION = "Authorization";
 
-    private final String UID = "c_id";
-
     @Autowired
     private TokenService tokenService;
 
+    /**
+     * Do filter internal.
+     *
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @param filterChain FilterChain
+     * */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        final String UID = "c_id";
         String tokenAuthorization = request.getHeader(AUTHORIZATION);
         String tokenRf = request.getHeader(REFRESH);
         String uid = request.getHeader(UID);
@@ -33,16 +37,16 @@ public class FilterService extends OncePerRequestFilter {
         String uriRegister = "/api/v1/travel/auth/register";
         boolean checkLoginUrl = request.getRequestURI().equals(uriLogin);
         boolean checkRegisterUrl = request.getRequestURI().equals(uriRegister);
-        boolean checkRequestSwagger = swaggerPassFilter(request.getRequestURI());
+        boolean urlPassFilter = urlPassFilter(request.getRequestURI());
 
-        if (!checkRequestSwagger) {
+        if (!urlPassFilter) {
             if (Utils.isEmpty(tokenAuthorization) && Utils.isEmpty(tokenRf) && !checkLoginUrl) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
         }
 
-        if (checkLoginUrl || checkRegisterUrl || checkRequestSwagger) {
+        if (checkLoginUrl || checkRegisterUrl || urlPassFilter) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -55,6 +59,13 @@ public class FilterService extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Add header response.
+     *
+     * @param listToken Map<String, String>
+     * @param uid String
+     * @param response HttpServletResponse
+     * */
     private void addHeader(Map<String, String> listToken, String uid, HttpServletResponse response) {
         if (Utils.isEmpty(listToken.get(REFRESH))) {
             response.setHeader(REFRESH, listToken.get(REFRESH));
@@ -65,7 +76,14 @@ public class FilterService extends OncePerRequestFilter {
         response.setContentType("application/json");
     }
 
-    private boolean swaggerPassFilter(String requestUrl) {
-        return requestUrl.contains("swagger") || requestUrl.contains("api-docs");
+    /**
+     * Url pass filter.
+     *
+     * @param requestUrl String
+     * @return boolean
+     * */
+    private boolean urlPassFilter(String requestUrl) {
+        return requestUrl.contains("swagger") || requestUrl.contains("api-docs")
+                || requestUrl.contains("address");
     }
 }
