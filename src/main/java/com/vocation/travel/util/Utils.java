@@ -1,7 +1,11 @@
 package com.vocation.travel.util;
 
 import java.util.Objects;
+
+import com.vocation.travel.model.AuthUser;
 import jakarta.servlet.http.Cookie;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -30,5 +34,15 @@ public class Utils {
       }
     }
     return result;
+  }
+
+  public static boolean checkIsUser(String uidRequest) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    AuthUser userDetails = (AuthUser) authentication.getPrincipal();
+    String idUContext = userDetails.getUser().getUserId();
+    if (uidRequest.equals(idUContext)) {
+      return true;
+    }
+    return false;
   }
 }

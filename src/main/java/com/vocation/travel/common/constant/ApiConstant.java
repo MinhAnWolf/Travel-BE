@@ -6,6 +6,12 @@ package com.vocation.travel.common.constant;
  * @author Minh An
  * */
 public class ApiConstant {
+    //------------------------------------------- CRUD -----------------------------------------------------------------
+    public final static String API_CREATE = "/create";
+    public final static String API_UPDATE = "/update";
+    public final static String API_DELETE = "/delete";
+    public final static String API_READ = "/read";
+
     //------------------------------------------- API AUTH -------------------------------------------------------------
     public final static String API_AUTH = "/auth";
     public final static String API_LOGIN = "/login";
@@ -17,4 +23,7 @@ public class ApiConstant {
     public final static String API_DISTRICT = "/district";
     public final static String API_PROVINCE = "/province";
     public final static String API_WARD = "/ward";
+
+    //------------------------------------------- API ADDRESS ----------------------------------------------------------
+    public final static String API_TRIP = "/trip";
 }
