@@ -1,4 +1,4 @@
-package com.vocation.travel.model.dto;
+package com.vocation.travel.dto;
 
 import lombok.*;
 
