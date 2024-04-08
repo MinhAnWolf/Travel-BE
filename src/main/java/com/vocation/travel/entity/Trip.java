@@ -30,6 +30,15 @@ public class Trip {
     @Column(name = "END_DATE")
     private LocalDateTime endDate;
 
-    @Column(name = "END_DATE")
+    @Column(name = "CREATE_BY")
     private LocalDateTime createBy;
+
+    @Column(name = "CREATE_DATE")
+    private LocalDateTime createDate;
+
+    @Column(name = "UPDATE_BY")
+    private LocalDateTime updateBy;
+
+    @Column(name = "UPDATE_DATE")
+    private LocalDateTime updateDate;
 }
