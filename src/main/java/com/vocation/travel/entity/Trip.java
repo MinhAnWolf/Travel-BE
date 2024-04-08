@@ -31,13 +31,13 @@ public class Trip {
     private LocalDateTime endDate;
 
     @Column(name = "CREATE_BY")
-    private LocalDateTime createBy;
+    private String createBy;
 
     @Column(name = "CREATE_DATE")
     private LocalDateTime createDate;
 
     @Column(name = "UPDATE_BY")
-    private LocalDateTime updateBy;
+    private String updateBy;
 
     @Column(name = "UPDATE_DATE")
     private LocalDateTime updateDate;

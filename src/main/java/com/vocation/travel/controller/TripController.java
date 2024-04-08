@@ -4,7 +4,6 @@ import com.vocation.travel.common.constant.ApiConstant;
 import com.vocation.travel.dto.TripDTO;
 import com.vocation.travel.entity.Trip;
 import com.vocation.travel.service.CRUD;
-import com.vocation.travel.service.serviceImpl.TripImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
