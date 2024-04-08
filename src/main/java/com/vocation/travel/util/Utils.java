@@ -40,9 +40,11 @@ public class Utils {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     AuthUser userDetails = (AuthUser) authentication.getPrincipal();
     String idUContext = userDetails.getUser().getUserId();
-    if (uidRequest.equals(idUContext)) {
-      return true;
-    }
-    return false;
+    return uidRequest.equals(idUContext);
+  }
+
+  public static AuthUser userSystem() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    return (AuthUser) authentication.getPrincipal();
   }
 }
