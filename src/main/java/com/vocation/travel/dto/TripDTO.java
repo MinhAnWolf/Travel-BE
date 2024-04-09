@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -15,7 +16,7 @@ public class TripDTO {
     private String id;
     private String title;
     private String idProvince;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private Date startDate;
+    private Date endDate;
     private String createBy;
 }

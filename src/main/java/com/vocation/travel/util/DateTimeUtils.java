@@ -2,18 +2,19 @@ package com.vocation.travel.util;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Date;
 
 public class DateTimeUtils {
   public static LocalDateTime plus7UTC(LocalDateTime localDateTime) {
     return localDateTime.atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toLocalDateTime();
   }
 
-  public static boolean checkStartTimeAfterFinishTime(LocalDateTime timeStart, LocalDateTime timeFinish) {
-    return timeStart.isAfter(timeFinish);
+  public static boolean checkStartTimeAfterFinishTime(Date timeStart, Date timeFinish) {
+    return timeStart.after(timeFinish);
   }
 
-  public static boolean checkFinishTimeBeforeStartTime(LocalDateTime timeStart, LocalDateTime timeFinish) {
-    return timeFinish.isBefore(timeStart);
+  public static boolean checkFinishTimeBeforeStartTime(Date timeStart, Date timeFinish) {
+    return timeFinish.before(timeStart);
   }
 
   public static boolean checkBetweenTime(LocalDateTime timeStart, LocalDateTime timeFinish) {

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import static com.vocation.travel.common.constant.CodeConstant.RESPONSE_SUCCESS;
 
@@ -52,10 +53,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
         trip.setStartDate(request.getStartDate());
         trip.setEndDate(request.getEndDate());
         trip.setCreateBy(Utils.userSystem().getUsername());
-        trip.setCreateDate(LocalDateTime.now());
         trip.setUpdateBy(Utils.userSystem().getUsername());
-        trip.setUpdateDate(LocalDateTime.now());
-
         tripRepository.save(trip);
         response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("CrateSuccess"));
         Log.outputLog(response);
@@ -107,7 +105,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
             Log.endLog(SERVICE_NAME, METHOD_NAME);
             return response;
         }
-        trip.setUpdateDate(LocalDateTime.now());
+        trip.setUpdateBy(Utils.userSystem().getUsername());
         tripRepository.save(trip);
         response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("UpdateSuccess"));
         Log.outputLog(response);
@@ -181,7 +179,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
      *
      *
      * */
-    private void validateTime(LocalDateTime startDate, LocalDateTime endDate, BaseResponse response, String method) {
+    private void validateTime(Date startDate, Date endDate, BaseResponse response, String method) {
         if (DateTimeUtils.checkFinishTimeBeforeStartTime(startDate, endDate)) {
             Log.outputLog(response);
             Log.endLog(SERVICE_NAME, method);

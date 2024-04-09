@@ -6,13 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "TRIP")
-public class Trip {
+public class Trip extends HelperBy {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "ID")
@@ -25,20 +26,8 @@ public class Trip {
     private String idProvince;
 
     @Column(name = "START_DATE")
-    private LocalDateTime startDate;
+    private Date startDate;
 
     @Column(name = "END_DATE")
-    private LocalDateTime endDate;
-
-    @Column(name = "CREATE_BY")
-    private String createBy;
-
-    @Column(name = "CREATE_DATE")
-    private LocalDateTime createDate;
-
-    @Column(name = "UPDATE_BY")
-    private String updateBy;
-
-    @Column(name = "UPDATE_DATE")
-    private LocalDateTime updateDate;
+    private Date endDate;
 }

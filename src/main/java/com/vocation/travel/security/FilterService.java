@@ -46,10 +46,6 @@ public class FilterService extends OncePerRequestFilter {
             }
         }
 
-        if (!Utils.isEmpty(tokenAuthorization) && !Utils.isEmpty(tokenRf) && !Utils.checkIsUser(uid)) {
-            return;
-        }
-
         if (checkLoginUrl || checkRegisterUrl || urlPassFilter) {
             filterChain.doFilter(request, response);
             return;
