@@ -12,8 +12,6 @@ import com.vocation.travel.util.DateTimeUtils;
 import com.vocation.travel.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import static com.vocation.travel.common.constant.CodeConstant.RESPONSE_SUCCESS;
@@ -42,6 +40,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
         final String METHOD_NAME = "create";
         Log.startLog(SERVICE_NAME, METHOD_NAME);
         Log.inputLog(request);
+        validateTime(request.getStartDate(), request.getEndDate(), request, METHOD_NAME);
         Trip trip = convertEntity(request, METHOD_NAME);
         BaseResponse response;
         if (Utils.isNull(trip)) {
@@ -97,6 +96,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
         final String METHOD_NAME = "update";
         Log.startLog(SERVICE_NAME, METHOD_NAME);
         Log.inputLog(request);
+        validateTime(request.getStartDate(), request.getEndDate(), request, METHOD_NAME);
         Trip trip = convertEntity(request, METHOD_NAME);
         BaseResponse response;
         if (Utils.isNull(trip)) {
@@ -177,17 +177,20 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
     /**
      * Validate time.
      *
-     *
+     * @param startDate Date
+     * @param endDate Date
+     * @param request TripDTO
+     * @param method String
      * */
-    private void validateTime(Date startDate, Date endDate, BaseResponse response, String method) {
-        if (DateTimeUtils.checkFinishTimeBeforeStartTime(startDate, endDate)) {
-            Log.outputLog(response);
+    private void validateTime(Date startDate, Date endDate, TripDTO request, String method) {
+        if (DateTimeUtils.checkStartTimeAfterFinishTime(startDate, endDate)) {
+            Log.outputLog(request);
             Log.endLog(SERVICE_NAME, method);
             throw new SystemErrorException(getMessage("DateStartFail", new Object[] {startDate, endDate}));
         }
 
         if (DateTimeUtils.checkFinishTimeBeforeStartTime(startDate, endDate)) {
-            Log.outputLog(response);
+            Log.outputLog(request);
             Log.endLog(SERVICE_NAME, method);
             throw new BadRequestException(getMessage("DateEndFail", new Object[] {startDate, endDate}));
         }
