@@ -7,6 +7,4 @@ public interface CRUD<E, T> {
     BaseResponse read(E request);
     BaseResponse update(E request);
     BaseResponse delete(E request);
-
-    T handleStartMethod(E request, String method);
 }

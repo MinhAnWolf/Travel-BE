@@ -4,7 +4,6 @@ import com.vocation.travel.common.constant.ApiConstant;
 import com.vocation.travel.dto.TripDTO;
 import com.vocation.travel.entity.Trip;
 import com.vocation.travel.service.CRUD;
-import com.vocation.travel.service.serviceImpl.TripImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,16 +21,16 @@ public class TripController {
 
     @GetMapping(ApiConstant.API_READ)
     public ResponseEntity<?> read(@RequestBody TripDTO tripDto) {
-        return ResponseEntity.ok(tripService.create(tripDto));
+        return ResponseEntity.ok(tripService.read(tripDto));
     }
 
     @PostMapping(ApiConstant.API_UPDATE)
     public ResponseEntity<?> update(@RequestBody TripDTO tripDto) {
-        return ResponseEntity.ok(tripService.create(tripDto));
+        return ResponseEntity.ok(tripService.update(tripDto));
     }
 
     @PostMapping(ApiConstant.API_DELETE)
     public ResponseEntity<?> delete(@RequestBody TripDTO tripDto) {
-        return ResponseEntity.ok(tripService.create(tripDto));
+        return ResponseEntity.ok(tripService.delete(tripDto));
     }
 }

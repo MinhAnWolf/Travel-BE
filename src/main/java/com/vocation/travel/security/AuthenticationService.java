@@ -49,6 +49,7 @@ public class AuthenticationService {
     public Response login(LoginRequest userLogin) {
         final String METHOD = "login";
         Log.startLog(SERVICE_NAME, METHOD);
+        Log.inputLog(userLogin);
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 userLogin.username(), userLogin.password()));
         SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -3,6 +3,7 @@ package com.vocation.travel.util;
 import java.util.Objects;
 
 import com.vocation.travel.model.AuthUser;
+import com.vocation.travel.model.Principal;
 import jakarta.servlet.http.Cookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,8 +44,8 @@ public class Utils {
     return uidRequest.equals(idUContext);
   }
 
-  public static AuthUser userSystem() {
+  public static String userSystem() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    return (AuthUser) authentication.getPrincipal();
+    return authentication.getName();
   }
 }
