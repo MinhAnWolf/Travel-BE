@@ -39,27 +39,27 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
     @Override
     public BaseResponse create(TripDTO request) {
         final String METHOD_NAME = "create";
-        Log.startLog(SERVICE_NAME, METHOD_NAME);
-        Log.inputLog(request);
-        validateTime(request.getStartDate(), request.getEndDate(), request, METHOD_NAME);
-        Trip trip = convertEntity(request, METHOD_NAME);
-        BaseResponse response;
-        if (Utils.isNull(trip)) {
-            response = new BaseResponse(RESPONSE_SUCCESS, Boolean.FALSE, getMessage("CrateFail"));
+        try {
+            Log.startLog(SERVICE_NAME, METHOD_NAME);
+            Log.inputLog(request);
+            validateTime(request.getStartDate(), request.getEndDate(), request, METHOD_NAME);
+            Trip trip = convertEntity(request, METHOD_NAME);
+            BaseResponse response;
+            trip.setStartDate(request.getStartDate());
+            trip.setEndDate(request.getEndDate());
+            System.out.println(SecurityContextHolder.getContext().getAuthentication());
+            trip.setCreateBy(Utils.userSystem());
+            trip.setUpdateBy(Utils.userSystem());
+            tripRepository.save(trip);
+            response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("CrateSuccess"));
             Log.outputLog(response);
             Log.endLog(SERVICE_NAME, METHOD_NAME);
             return response;
+        } catch (Exception e) {
+            Log.outputLog(request);
+            Log.endLog(SERVICE_NAME, METHOD_NAME);
+            throw new SystemErrorException(getMessage("CrateFail"));
         }
-        trip.setStartDate(request.getStartDate());
-        trip.setEndDate(request.getEndDate());
-        System.out.println(SecurityContextHolder.getContext().getAuthentication());
-        trip.setCreateBy(String.valueOf(Utils.userSystem().getClaims().get("id")));
-        trip.setUpdateBy(String.valueOf(Utils.userSystem().getClaims().get("id")));
-        tripRepository.save(trip);
-        response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("CrateSuccess"));
-        Log.outputLog(response);
-        Log.endLog(SERVICE_NAME, METHOD_NAME);
-        return response;
     }
 
     /**
@@ -71,20 +71,19 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
     @Override
     public BaseResponse read(TripDTO request) {
         final String METHOD_NAME = "read";
-        Log.startLog(SERVICE_NAME, METHOD_NAME);
-        Log.inputLog(request);
-        Trip trip = convertEntity(request, METHOD_NAME);
-        BaseResponse response;
-        if (Utils.isNull(trip)) {
-            response = new BaseResponse(RESPONSE_SUCCESS, Boolean.FALSE, getMessage("ReadFail"));
+        try {
+            Log.startLog(SERVICE_NAME, METHOD_NAME);
+            Log.inputLog(request);
+            BaseResponse response;
+            response = new BaseResponse(RESPONSE_SUCCESS, tripRepository.findAll(), getMessage("ReadSuccess"));
             Log.outputLog(response);
             Log.endLog(SERVICE_NAME, METHOD_NAME);
             return response;
+        } catch (Exception e) {
+            Log.outputLog(request);
+            Log.endLog(SERVICE_NAME, METHOD_NAME);
+            throw new SystemErrorException(getMessage("ReadFail"));
         }
-        response = new BaseResponse(RESPONSE_SUCCESS, tripRepository.findAll(), getMessage("ReadSuccess"));
-        Log.outputLog(response);
-        Log.endLog(SERVICE_NAME, METHOD_NAME);
-        return response;
     }
 
     /**
@@ -96,23 +95,23 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
     @Override
     public BaseResponse update(TripDTO request) {
         final String METHOD_NAME = "update";
-        Log.startLog(SERVICE_NAME, METHOD_NAME);
-        Log.inputLog(request);
-        validateTime(request.getStartDate(), request.getEndDate(), request, METHOD_NAME);
-        Trip trip = convertEntity(request, METHOD_NAME);
-        BaseResponse response;
-        if (Utils.isNull(trip)) {
-            response = new BaseResponse(RESPONSE_SUCCESS, Boolean.FALSE, getMessage("UpdateFail"));
+        try {
+            Log.startLog(SERVICE_NAME, METHOD_NAME);
+            Log.inputLog(request);
+            validateTime(request.getStartDate(), request.getEndDate(), request, METHOD_NAME);
+            Trip trip = convertEntity(request, METHOD_NAME);
+            BaseResponse response;
+            trip.setUpdateBy(Utils.userSystem());
+            tripRepository.save(trip);
+            response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("UpdateSuccess"));
             Log.outputLog(response);
             Log.endLog(SERVICE_NAME, METHOD_NAME);
             return response;
+        } catch (Exception e) {
+            Log.outputLog(request);
+            Log.endLog(SERVICE_NAME, METHOD_NAME);
+            throw new SystemErrorException(getMessage("UpdateFail"));
         }
-        trip.setUpdateBy(String.valueOf(Utils.userSystem().getClaims().get("id")));
-        tripRepository.save(trip);
-        response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("UpdateSuccess"));
-        Log.outputLog(response);
-        Log.endLog(SERVICE_NAME, METHOD_NAME);
-        return response;
     }
 
     /**
@@ -124,21 +123,22 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
     @Override
     public BaseResponse delete(TripDTO request) {
         final String METHOD_NAME = "delete";
-        Log.startLog(SERVICE_NAME, METHOD_NAME);
-        Log.inputLog(request);
-        Trip trip = convertEntity(request, METHOD_NAME);
-        BaseResponse response;
-        if (Utils.isNull(trip)) {
-            response = new BaseResponse(RESPONSE_SUCCESS, Boolean.FALSE, getMessage("DeleteFail"));
+        try {
+            Log.startLog(SERVICE_NAME, METHOD_NAME);
+            Log.inputLog(request);
+            Trip trip = convertEntity(request, METHOD_NAME);
+            BaseResponse response;
+            tripRepository.delete(trip);
+            response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("DeleteSuccess"));
             Log.outputLog(response);
             Log.endLog(SERVICE_NAME, METHOD_NAME);
             return response;
+        } catch (Exception e) {
+            Log.outputLog(request);
+            Log.endLog(SERVICE_NAME, METHOD_NAME);
+            throw new SystemErrorException(getMessage("DeleteFail"));
         }
-        tripRepository.delete(trip);
-        response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("DeleteSuccess"));
-        Log.outputLog(response);
-        Log.endLog(SERVICE_NAME, METHOD_NAME);
-        return response;
+
     }
 
     /**
@@ -157,11 +157,12 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
                 throw new BadRequestException(getMessage("ParamsNull"));
             }
         }
-        trip.setDesc(request.getDesc());
+        trip.setImage(request.getImage());
+        trip.setDescription(request.getDescription());
         trip.setTitle(request.getTitle());
         trip.setStartDate(request.getStartDate());
         trip.setEndDate(request.getEndDate());
-        trip.setIdProvince(request.getIdProvince());
+        trip.setAddress(request.getAddress());
         return trip;
     }
 
@@ -173,7 +174,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
      * */
     private boolean checkInputParams(TripDTO request) {
         return !Utils.isEmpty(request.getId()) && !Utils.isEmpty(request.getTitle())
-                && !Utils.isEmpty(request.getIdProvince()) && !Utils.isNull(request.getStartDate())
+                && !Utils.isEmpty(request.getAddress()) && !Utils.isNull(request.getStartDate())
                 && !Utils.isNull(request.getEndDate());
     }
 

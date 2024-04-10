@@ -44,10 +44,8 @@ public class Utils {
     return uidRequest.equals(idUContext);
   }
 
-  public static Principal userSystem() {
+  public static String userSystem() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    Principal principal = new Principal();
-    principal.setClaims(authentication.);
-    return principal;
+    return authentication.getName();
   }
 }

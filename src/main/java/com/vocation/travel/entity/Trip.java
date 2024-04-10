@@ -22,11 +22,11 @@ public class Trip extends HelperBy {
     @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "DESC")
-    private String desc;
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-    @Column(name = "ID_PROVINCE")
-    private String idProvince;
+    @Column(name = "ADDRESS")
+    private String address;
 
     @Column(name = "START_DATE")
     private Date startDate;
@@ -40,7 +40,10 @@ public class Trip extends HelperBy {
     @Column(name = "ID_DISTRICT")
     private Date idDistrict;
 
+    @Column(name = "IMAGE")
+    private String image;
+
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "trip_detail_id", referencedColumnName = "id")
+    @JoinColumn(name = "TRIP_DETAIL_ID", referencedColumnName = "ID")
     private TripDetail tripDetail;
 }

@@ -21,16 +21,16 @@ public class TripController {
 
     @GetMapping(ApiConstant.API_READ)
     public ResponseEntity<?> read(@RequestBody TripDTO tripDto) {
-        return ResponseEntity.ok(tripService.create(tripDto));
+        return ResponseEntity.ok(tripService.read(tripDto));
     }
 
     @PostMapping(ApiConstant.API_UPDATE)
     public ResponseEntity<?> update(@RequestBody TripDTO tripDto) {
-        return ResponseEntity.ok(tripService.create(tripDto));
+        return ResponseEntity.ok(tripService.update(tripDto));
     }
 
     @PostMapping(ApiConstant.API_DELETE)
     public ResponseEntity<?> delete(@RequestBody TripDTO tripDto) {
-        return ResponseEntity.ok(tripService.create(tripDto));
+        return ResponseEntity.ok(tripService.delete(tripDto));
     }
 }
