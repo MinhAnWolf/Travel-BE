@@ -22,6 +22,9 @@ public class Trip extends HelperBy {
     @Column(name = "TITLE")
     private String title;
 
+    @Column(name = "DESC")
+    private String desc;
+
     @Column(name = "ID_PROVINCE")
     private String idProvince;
 
@@ -30,4 +33,14 @@ public class Trip extends HelperBy {
 
     @Column(name = "END_DATE")
     private Date endDate;
+
+    @Column(name = "ID_WARD")
+    private Date idWard;
+
+    @Column(name = "ID_DISTRICT")
+    private Date idDistrict;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "trip_detail_id", referencedColumnName = "id")
+    private TripDetail tripDetail;
 }

@@ -11,6 +11,7 @@ import com.vocation.travel.service.CRUD;
 import com.vocation.travel.util.DateTimeUtils;
 import com.vocation.travel.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.Date;
 
@@ -51,8 +52,9 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
         }
         trip.setStartDate(request.getStartDate());
         trip.setEndDate(request.getEndDate());
-        trip.setCreateBy(Utils.userSystem().getUsername());
-        trip.setUpdateBy(Utils.userSystem().getUsername());
+        System.out.println(SecurityContextHolder.getContext().getAuthentication());
+        trip.setCreateBy(String.valueOf(Utils.userSystem().getClaims().get("id")));
+        trip.setUpdateBy(String.valueOf(Utils.userSystem().getClaims().get("id")));
         tripRepository.save(trip);
         response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("CrateSuccess"));
         Log.outputLog(response);
@@ -105,7 +107,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
             Log.endLog(SERVICE_NAME, METHOD_NAME);
             return response;
         }
-        trip.setUpdateBy(Utils.userSystem().getUsername());
+        trip.setUpdateBy(String.valueOf(Utils.userSystem().getClaims().get("id")));
         tripRepository.save(trip);
         response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("UpdateSuccess"));
         Log.outputLog(response);
@@ -152,9 +154,10 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
             trip.setId(null);
         } else {
             if (!checkInputParams(request)) {
-                return null;
+                throw new BadRequestException(getMessage("ParamsNull"));
             }
         }
+        trip.setDesc(request.getDesc());
         trip.setTitle(request.getTitle());
         trip.setStartDate(request.getStartDate());
         trip.setEndDate(request.getEndDate());

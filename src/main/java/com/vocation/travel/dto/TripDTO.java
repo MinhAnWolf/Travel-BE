@@ -15,6 +15,7 @@ import java.util.Date;
 public class TripDTO {
     private String id;
     private String title;
+    private String desc;
     private String idProvince;
     private Date startDate;
     private Date endDate;
