@@ -72,11 +72,12 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
       member.setId(request.getId());
       member.setIdUser(request.getIdUser());
       member.setTrip(trip.get());
+      member.setRole(request.getRole());
       return member;
   }
 
   private void checkInputParams(MemberDTO memberDTO) {
-    if (Objects.isNull(memberDTO) || Objects.isNull(memberDTO.getIdTrip())) {
+    if (Objects.isNull(memberDTO) || Objects.isNull(memberDTO.getIdTrip()) || Objects.isNull(memberDTO.getRole())) {
       throw new BadRequestException(getMessage("RequestFail"));
     }
   }

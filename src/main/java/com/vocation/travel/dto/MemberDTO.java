@@ -15,5 +15,6 @@ public class MemberDTO {
   private String idUser;
   private String idTrip;
   private Trip trip;
+  private String role;
   private InformationDTO informationDTO;
 }

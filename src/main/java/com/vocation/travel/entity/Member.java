@@ -22,6 +22,9 @@ public class Member extends HelperBy{
   @Column(name = "ID_USER")
   private String idUser;
 
+  @Column(name = "ROLE")
+  private String role;
+
   @ManyToOne
   @JoinColumn(name = "ID_TRIP")
   private Trip trip;

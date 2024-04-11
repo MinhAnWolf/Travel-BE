@@ -5,6 +5,7 @@ import com.vocation.travel.config.ExceptionHandler.*;
 import com.vocation.travel.config.Message;
 import com.vocation.travel.dto.MemberDTO;
 import com.vocation.travel.dto.TripDTO;
+import com.vocation.travel.entity.Member;
 import com.vocation.travel.entity.Trip;
 import com.vocation.travel.model.BaseResponse;
 import com.vocation.travel.repository.TripRepository;
@@ -52,6 +53,15 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             trip.setCreateBy(Utils.userSystem());
             trip.setUpdateBy(Utils.userSystem());
             tripRepository.save(trip);
+            if (!request.getMembers().isEmpty()) {
+                for (Member member: request.getMembers()) {
+                    MemberDTO memberDto = new MemberDTO();
+                    memberDto.setTrip(trip);
+                    memberDto.setRole(member.getRole());
+                    memberDto.setIdUser(member.getIdUser());
+                    memberService.create(memberDto);
+                }
+            }
             response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("CrateSuccess"));
             Log.outputLog(response);
             Log.endLog(SERVICE_NAME, METHOD_NAME);
@@ -164,11 +174,8 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
         trip.setStartDate(request.getStartDate());
         trip.setEndDate(request.getEndDate());
         trip.setAddress(request.getAddress());
-        if (!request.getMembers().isEmpty()) {
-
-        }
-
         trip.setMembers(request.getMembers());
+        trip.setOwner(request.getOwner());
         return trip;
     }
 
