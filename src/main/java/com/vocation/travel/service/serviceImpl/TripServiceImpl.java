@@ -3,6 +3,7 @@ package com.vocation.travel.service.serviceImpl;
 import com.vocation.travel.common.Log;
 import com.vocation.travel.config.ExceptionHandler.*;
 import com.vocation.travel.config.Message;
+import com.vocation.travel.dto.MemberDTO;
 import com.vocation.travel.dto.TripDTO;
 import com.vocation.travel.entity.Trip;
 import com.vocation.travel.model.BaseResponse;
@@ -24,14 +25,17 @@ import static com.vocation.travel.common.constant.CodeConstant.RESPONSE_SUCCESS;
  * @version ver0.0.1
  * */
 @Service
-public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
+public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseResponse> {
     @Autowired
     private TripRepository tripRepository;
 
     private final static String SERVICE_NAME = "TripService";
 
+    @Autowired
+    private CRUD<MemberDTO, BaseResponse> memberService;
+
     /**
-     * Create.
+     * Create trip.
      *
      * @param request TripDTO
      * @return BaseResponse
@@ -45,9 +49,6 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
             validateTime(request.getStartDate(), request.getEndDate(), request, METHOD_NAME);
             Trip trip = convertEntity(request, METHOD_NAME);
             BaseResponse response;
-            trip.setStartDate(request.getStartDate());
-            trip.setEndDate(request.getEndDate());
-            System.out.println(SecurityContextHolder.getContext().getAuthentication());
             trip.setCreateBy(Utils.userSystem());
             trip.setUpdateBy(Utils.userSystem());
             tripRepository.save(trip);
@@ -63,7 +64,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
     }
 
     /**
-     * Read.
+     * Read trip.
      *
      * @param request TripDTO
      * @return BaseResponse
@@ -87,7 +88,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
     }
 
     /**
-     * Update.
+     * Update trip.
      *
      * @param request TripDTO
      * @return BaseResponse
@@ -115,7 +116,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
     }
 
     /**
-     * Delete.
+     * Delete trip.
      *
      * @param request TripDTO
      * @return BaseResponse
@@ -163,6 +164,11 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, Trip> {
         trip.setStartDate(request.getStartDate());
         trip.setEndDate(request.getEndDate());
         trip.setAddress(request.getAddress());
+        if (!request.getMembers().isEmpty()) {
+
+        }
+
+        trip.setMembers(request.getMembers());
         return trip;
     }
 

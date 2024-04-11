@@ -3,19 +3,19 @@ package com.vocation.travel.util;
 import java.util.Objects;
 
 import com.vocation.travel.model.AuthUser;
-import com.vocation.travel.model.Principal;
 import jakarta.servlet.http.Cookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
+ *Utils support.
  *
- *
+ * @author Minh An
  * */
 public class Utils {
 
   /**
-   *
+   * C
    * */
   public static boolean isEmpty(String value) {
     return value == null || value.isEmpty();

@@ -1,23 +1,28 @@
 package com.vocation.travel.entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
-@Entity(name = "TRIP_DETAIL")
 @Getter
 @Setter
-public class TripDetail extends HelperBy{
+@Entity(name = "MEMBER")
+public class Member extends HelperBy{
   @GeneratedValue(strategy = GenerationType.UUID)
   @Id
   @Column(name = "ID")
   private String id;
 
-  @OneToOne(mappedBy = "tripDetail")
+  @Column(name = "ID_USER")
+  private String idUser;
+
+  @ManyToOne
+  @JoinColumn(name = "ID_TRIP")
   private Trip trip;
 }

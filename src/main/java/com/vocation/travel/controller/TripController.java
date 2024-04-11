@@ -3,6 +3,7 @@ package com.vocation.travel.controller;
 import com.vocation.travel.common.constant.ApiConstant;
 import com.vocation.travel.dto.TripDTO;
 import com.vocation.travel.entity.Trip;
+import com.vocation.travel.model.BaseResponse;
 import com.vocation.travel.service.CRUD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(ApiConstant.API_TRIP)
 public class TripController {
     @Autowired
-    private CRUD<TripDTO, Trip> tripService;
+    private CRUD<TripDTO, BaseResponse> tripService;
 
     @PostMapping(ApiConstant.API_CREATE)
     public ResponseEntity<?> create(@RequestBody TripDTO tripDto) {
