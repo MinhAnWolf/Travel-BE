@@ -1,6 +1,7 @@
 package com.vocation.travel.service.serviceImpl;
 
 import com.vocation.travel.common.Log;
+import com.vocation.travel.common.constant.CommonConstant;
 import com.vocation.travel.config.ExceptionHandler.*;
 import com.vocation.travel.config.Message;
 import com.vocation.travel.dto.MemberDTO;
@@ -13,11 +14,10 @@ import com.vocation.travel.service.CRUD;
 import com.vocation.travel.util.DateTimeUtils;
 import com.vocation.travel.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.Date;
 
-import static com.vocation.travel.common.constant.CodeConstant.RESPONSE_SUCCESS;
+import static com.vocation.travel.common.constant.CommonConstant.RESPONSE_SUCCESS;
 
 /**
  * Trip service.
@@ -43,12 +43,12 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
      * */
     @Override
     public BaseResponse create(TripDTO request) {
-        final String METHOD_NAME = "create";
         try {
-            Log.startLog(SERVICE_NAME, METHOD_NAME);
+            Log.startLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             Log.inputLog(request);
-            validateTime(request.getStartDate(), request.getEndDate(), request, METHOD_NAME);
-            Trip trip = convertEntity(request, METHOD_NAME);
+            checkInputParams(request, CommonConstant.METHOD_CREATE);
+            validateTime(request.getStartDate(), request.getEndDate(), request, CommonConstant.METHOD_CREATE);
+            Trip trip = convertEntity(request, CommonConstant.METHOD_CREATE);
             BaseResponse response;
             trip.setCreateBy(Utils.userSystem());
             trip.setUpdateBy(Utils.userSystem());
@@ -64,11 +64,11 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             }
             response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("CrateSuccess"));
             Log.outputLog(response);
-            Log.endLog(SERVICE_NAME, METHOD_NAME);
+            Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             return response;
         } catch (Exception e) {
             Log.outputLog(request);
-            Log.endLog(SERVICE_NAME, METHOD_NAME);
+            Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             throw new SystemErrorException(getMessage("CrateFail"));
         }
     }
@@ -161,10 +161,10 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
      * */
     private Trip convertEntity(TripDTO request, String method) {
         Trip trip = new Trip();
-        if (method.equals("create")) {
+        if (method.equals(method)) {
             trip.setId(null);
         } else {
-            if (!checkInputParams(request)) {
+            if (!checkInputParams(request, method)) {
                 throw new BadRequestException(getMessage("ParamsNull"));
             }
         }
@@ -185,10 +185,15 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
      * @param request TripDTO
      * @return boolean
      * */
-    private boolean checkInputParams(TripDTO request) {
-        return !Utils.isEmpty(request.getId()) && !Utils.isEmpty(request.getTitle())
-                && !Utils.isEmpty(request.getAddress()) && !Utils.isNull(request.getStartDate())
-                && !Utils.isNull(request.getEndDate());
+    private boolean checkInputParams(TripDTO request, String method) {
+        if (method.equals(CommonConstant.METHOD_CREATE)) {
+            return !Utils.isEmpty(request.getTitle())
+                || !Utils.isEmpty(request.getAddress()) || !Utils.isNull(request.getStartDate())
+                || !Utils.isNull(request.getEndDate());
+        }
+        return !Utils.isEmpty(request.getId()) || !Utils.isEmpty(request.getTitle())
+            || !Utils.isEmpty(request.getAddress()) || !Utils.isNull(request.getStartDate())
+            || !Utils.isNull(request.getEndDate());
     }
 
     /**

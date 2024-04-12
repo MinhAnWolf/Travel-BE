@@ -24,7 +24,12 @@ public class ApiConstant {
     public final static String API_PROVINCE = "/province";
     public final static String API_WARD = "/ward";
 
-    //------------------------------------------- API ADDRESS ----------------------------------------------------------
+    //------------------------------------------- API TRIP -------------------------------------------------------------
     public final static String API_TRIP = "/trip";
+
+    //------------------------------------------- API INFORMATION ------------------------------------------------------
     public final static String API_INFORMATION = "/information";
+
+    //------------------------------------------- API MEMBER -----------------------------------------------------------
+    public final static String API_MEMBER = "/member";
 }

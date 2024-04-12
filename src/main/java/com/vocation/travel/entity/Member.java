@@ -13,7 +13,7 @@ import jakarta.persistence.ManyToOne;
 @Getter
 @Setter
 @Entity(name = "MEMBER")
-public class Member extends HelperBy{
+public class Member extends HelperBy {
   @GeneratedValue(strategy = GenerationType.UUID)
   @Id
   @Column(name = "ID")

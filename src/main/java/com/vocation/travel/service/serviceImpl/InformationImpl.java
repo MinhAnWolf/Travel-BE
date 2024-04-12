@@ -10,10 +10,9 @@ import com.vocation.travel.repository.InformationRepository;
 import com.vocation.travel.service.CRUD;
 import com.vocation.travel.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import static com.vocation.travel.common.constant.CodeConstant.RESPONSE_SUCCESS;
+import static com.vocation.travel.common.constant.CommonConstant.RESPONSE_SUCCESS;
 
 @Service
 public class InformationImpl extends Message implements CRUD<InformationDTO, Information> {

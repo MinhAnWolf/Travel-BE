@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface MemberRepository extends JpaRepository<Member, String>  {
-//  @Query(value = "", nativeQuery = true)
-//  public List<MemberDTO> getMemberByTravelDetailId();
+  @Query(value = "SELECT * FROM MEMBER WHERE id_trip = :idTrip", nativeQuery = true)
+  List<MemberDTO> getMemberByTravelDetailId(String idTrip);
+
+  @Query(value = "SELECT COUNT(*) FROM MEMBER WHERE id = :idMember and id_trip = :idTrip", nativeQuery = true)
+  Integer getMemberInTrip(String idMember, String idTrip);
 }
