@@ -26,4 +26,5 @@ public class ApiConstant {
 
     //------------------------------------------- API ADDRESS ----------------------------------------------------------
     public final static String API_TRIP = "/trip";
+    public final static String API_INFORMATION = "/information";
 }
