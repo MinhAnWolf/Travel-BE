@@ -11,5 +11,10 @@ public interface MemberRepository extends JpaRepository<Member, String>  {
   List<MemberDTO> getMemberByTravelDetailId(String idTrip);
 
   @Query(value = "SELECT COUNT(*) FROM MEMBER WHERE id = :idMember and id_trip = :idTrip", nativeQuery = true)
-  Integer getMemberInTrip(String idMember, String idTrip);
+  Integer checkMemberInTrip(String idMember, String idTrip);
+
+
+  @Query(value = "SELECT COUNT(*) FROM MEMBER WHERE id_user = :idUser and id_trip = :idTrip", nativeQuery = true)
+  Integer checkUserIdInTrip(String idUser, String idTrip);
 }
+

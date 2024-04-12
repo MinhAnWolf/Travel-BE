@@ -11,6 +11,8 @@ import com.vocation.travel.entity.Trip;
 import com.vocation.travel.model.BaseResponse;
 import com.vocation.travel.repository.TripRepository;
 import com.vocation.travel.service.CRUD;
+import com.vocation.travel.service.MemberService;
+import com.vocation.travel.service.UserService;
 import com.vocation.travel.util.DateTimeUtils;
 import com.vocation.travel.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,11 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
     @Autowired
     private CRUD<MemberDTO, BaseResponse> memberService;
 
+    @Autowired
+    private MemberService memberServices;
+
+    @Autowired
+    private UserService userService;
     /**
      * Create trip.
      *
@@ -52,13 +59,18 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             BaseResponse response;
             trip.setCreateBy(Utils.userSystem());
             trip.setUpdateBy(Utils.userSystem());
+            String idUser = userService.getUserByUserName().getUserId();
+            trip.setOwner(idUser);
             tripRepository.save(trip);
             if (!request.getMembers().isEmpty()) {
                 for (Member member: request.getMembers()) {
                     MemberDTO memberDto = new MemberDTO();
                     memberDto.setTrip(trip);
-                    memberDto.setRole(member.getRole());
+                    memberDto.setRole(CommonConstant.RoleTrip.MEMBER);
                     memberDto.setIdUser(member.getIdUser());
+                    if (member.getIdUser().equals(idUser)) {
+                        memberDto.setRole(CommonConstant.RoleTrip.OWNER);
+                    }
                     memberService.create(memberDto);
                 }
             }
@@ -81,18 +93,17 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
      * */
     @Override
     public BaseResponse read(TripDTO request) {
-        final String METHOD_NAME = "read";
         try {
-            Log.startLog(SERVICE_NAME, METHOD_NAME);
+            Log.startLog(SERVICE_NAME, CommonConstant.METHOD_READ);
             Log.inputLog(request);
-            BaseResponse response;
-            response = new BaseResponse(RESPONSE_SUCCESS, tripRepository.findAll(), getMessage("ReadSuccess"));
+            checkPermissionsTravel(request);
+            BaseResponse response = new BaseResponse(RESPONSE_SUCCESS, tripRepository.findAll(), getMessage("ReadSuccess"));
             Log.outputLog(response);
-            Log.endLog(SERVICE_NAME, METHOD_NAME);
+            Log.endLog(SERVICE_NAME, CommonConstant.METHOD_READ);
             return response;
         } catch (Exception e) {
             Log.outputLog(request);
-            Log.endLog(SERVICE_NAME, METHOD_NAME);
+            Log.endLog(SERVICE_NAME, CommonConstant.METHOD_READ);
             throw new SystemErrorException(getMessage("ReadFail"));
         }
     }
@@ -105,22 +116,22 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
      * */
     @Override
     public BaseResponse update(TripDTO request) {
-        final String METHOD_NAME = "update";
         try {
-            Log.startLog(SERVICE_NAME, METHOD_NAME);
+            Log.startLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
             Log.inputLog(request);
-            validateTime(request.getStartDate(), request.getEndDate(), request, METHOD_NAME);
-            Trip trip = convertEntity(request, METHOD_NAME);
+            checkPermissionsTravel(request);
+            validateTime(request.getStartDate(), request.getEndDate(), request, CommonConstant.METHOD_UPDATE);
+            Trip trip = convertEntity(request, CommonConstant.METHOD_UPDATE);
             BaseResponse response;
             trip.setUpdateBy(Utils.userSystem());
             tripRepository.save(trip);
             response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("UpdateSuccess"));
             Log.outputLog(response);
-            Log.endLog(SERVICE_NAME, METHOD_NAME);
+            Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
             return response;
         } catch (Exception e) {
             Log.outputLog(request);
-            Log.endLog(SERVICE_NAME, METHOD_NAME);
+            Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
             throw new SystemErrorException(getMessage("UpdateFail"));
         }
     }
@@ -133,20 +144,23 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
      * */
     @Override
     public BaseResponse delete(TripDTO request) {
-        final String METHOD_NAME = "delete";
         try {
-            Log.startLog(SERVICE_NAME, METHOD_NAME);
+            Log.startLog(SERVICE_NAME, CommonConstant.METHOD_DELETE);
             Log.inputLog(request);
-            Trip trip = convertEntity(request, METHOD_NAME);
-            BaseResponse response;
-            tripRepository.delete(trip);
-            response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("DeleteSuccess"));
+            String owner = tripRepository.getOwnerTrip(request.getId());
+            if (!userService.getUserByUserName().getUserId().equals(owner)) {
+                Log.outputLog(request);
+                Log.endLog(SERVICE_NAME, CommonConstant.METHOD_DELETE);
+                throw new SystemErrorException(getMessage("Permissions"));
+            }
+            tripRepository.delete(convertEntity(request, CommonConstant.METHOD_DELETE));
+            BaseResponse response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("DeleteSuccess"));
             Log.outputLog(response);
-            Log.endLog(SERVICE_NAME, METHOD_NAME);
+            Log.endLog(SERVICE_NAME, CommonConstant.METHOD_DELETE);
             return response;
         } catch (Exception e) {
             Log.outputLog(request);
-            Log.endLog(SERVICE_NAME, METHOD_NAME);
+            Log.endLog(SERVICE_NAME, CommonConstant.METHOD_DELETE);
             throw new SystemErrorException(getMessage("DeleteFail"));
         }
 
@@ -168,14 +182,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
                 throw new BadRequestException(getMessage("ParamsNull"));
             }
         }
-        trip.setImage(request.getImage());
-        trip.setDescription(request.getDescription());
-        trip.setTitle(request.getTitle());
-        trip.setStartDate(request.getStartDate());
-        trip.setEndDate(request.getEndDate());
-        trip.setAddress(request.getAddress());
-        trip.setMembers(request.getMembers());
-        trip.setOwner(request.getOwner());
+        setData(trip, request);
         return trip;
     }
 
@@ -188,12 +195,12 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
     private boolean checkInputParams(TripDTO request, String method) {
         if (method.equals(CommonConstant.METHOD_CREATE)) {
             return !Utils.isEmpty(request.getTitle())
-                || !Utils.isEmpty(request.getAddress()) || !Utils.isNull(request.getStartDate())
-                || !Utils.isNull(request.getEndDate());
+                || !Utils.isEmpty(request.getAddress()) || !Utils.objNull(request.getStartDate())
+                || !Utils.objNull(request.getEndDate());
         }
         return !Utils.isEmpty(request.getId()) || !Utils.isEmpty(request.getTitle())
-            || !Utils.isEmpty(request.getAddress()) || !Utils.isNull(request.getStartDate())
-            || !Utils.isNull(request.getEndDate());
+            || !Utils.isEmpty(request.getAddress()) || !Utils.objNull(request.getStartDate())
+            || !Utils.objNull(request.getEndDate());
     }
 
     /**
@@ -215,6 +222,26 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             Log.outputLog(request);
             Log.endLog(SERVICE_NAME, method);
             throw new BadRequestException(getMessage("DateEndFail", new Object[] {startDate, endDate}));
+        }
+    }
+
+    private void setData(Trip trip, TripDTO request) {
+        trip.setImage(request.getImage());
+        trip.setDescription(request.getDescription());
+        trip.setTitle(request.getTitle());
+        trip.setStartDate(request.getStartDate());
+        trip.setEndDate(request.getEndDate());
+        trip.setAddress(request.getAddress());
+        trip.setMembers(request.getMembers());
+        trip.setOwner(request.getOwner());
+    }
+
+    private void checkPermissionsTravel(TripDTO request) {
+        String userSystem = userService.getUserByUserName().getUserId();
+        boolean inTravel = memberServices.checkUserInTravel(userSystem, request.getId());
+        boolean isOwner = tripRepository.getOwnerTrip(request.getId()).equals(userSystem);
+        if (!inTravel && !isOwner) {
+            throw new SystemErrorException(getMessage("Permissions"));
         }
     }
 }

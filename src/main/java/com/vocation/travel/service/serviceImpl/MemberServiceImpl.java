@@ -55,7 +55,8 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
 
   @Override
   public BaseResponse delete(MemberDTO request) {
-    return null;
+    memberRepository.delete(convertEntity(request));
+    return new BaseResponse(CommonConstant.RESPONSE_SUCCESS, Boolean.TRUE, getMessage("DeleteSuccess"));
   }
 
   /**
@@ -80,6 +81,15 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
     return list;
   }
 
+  @Override
+  public boolean checkUserInTravel(String userId, String idTravel) {
+    try {
+      return memberRepository.checkUserIdInTrip(userId, idTravel) > 0;
+    } catch (Exception e) {
+      throw new SystemErrorException(getMessage("SystemErr"));
+    }
+  }
+
   private Member convertEntity(MemberDTO request) {
       Member member = new Member();
       member.setId(request.getId());
@@ -98,7 +108,7 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
 
   private boolean checkMemberInTrip(String memberId, String idTravel) {
     try {
-      return memberRepository.getMemberInTrip(memberId, idTravel) > 0;
+      return memberRepository.checkMemberInTrip(memberId, idTravel) > 0;
     } catch (Exception e) {
       throw new SystemErrorException(getMessage("SystemErr"));
     }

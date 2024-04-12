@@ -11,6 +11,7 @@ public class ApiConstant {
     public final static String API_UPDATE = "/update";
     public final static String API_DELETE = "/delete";
     public final static String API_READ = "/read";
+    public final static String API_GET = "/get";
 
     //------------------------------------------- API AUTH -------------------------------------------------------------
     public final static String API_AUTH = "/auth";

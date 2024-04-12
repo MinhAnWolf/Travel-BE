@@ -7,4 +7,8 @@ public class CommonConstant {
     public static final String METHOD_DELETE = "delete";
     public static final String METHOD_READ = "read";
     public static final String METHOD_UPDATE = "update";
+    public static class RoleTrip {
+        public static final String OWNER = "owner";
+        public static final String MEMBER = "member";
+    }
 }

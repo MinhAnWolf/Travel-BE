@@ -6,4 +6,6 @@ import org.springframework.stereotype.Service;
 
 public interface UserService {
   User getUserById(String id);
+
+  User getUserByUserName();
 }

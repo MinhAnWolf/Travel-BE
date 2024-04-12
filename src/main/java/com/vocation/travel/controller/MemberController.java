@@ -17,7 +17,7 @@ public class MemberController {
   @Autowired
   private MemberService memberService;
 
-  @GetMapping(ApiConstant.API_READ)
+  @GetMapping(ApiConstant.API_GET)
   public ResponseEntity<?> read(@RequestParam("id-member") String idMember, @RequestParam("id-travel") String idTravel) {
     return ResponseEntity.ok(memberService.getMemberByTravelId(idMember, idTravel));
   }

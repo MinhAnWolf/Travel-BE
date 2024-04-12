@@ -56,7 +56,7 @@ public class FilterService extends OncePerRequestFilter {
         }
 
         Map<String, String> listToken =  tokenService.refeshToken(tokenRf, tokenAuthorization, uid);
-        if (!Utils.isNull(listToken) && !listToken.isEmpty()) {
+        if (!Utils.objNull(listToken) && !listToken.isEmpty()) {
             addHeader(listToken, uid, response);
         }
 
