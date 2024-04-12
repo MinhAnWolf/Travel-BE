@@ -1,7 +1,7 @@
 package com.vocation.travel.service.serviceImpl;
 
 import com.vocation.travel.common.Log;
-import com.vocation.travel.common.constant.CodeConstant;
+import com.vocation.travel.common.constant.CommonConstant;
 import com.vocation.travel.entity.District;
 import com.vocation.travel.entity.Province;
 import com.vocation.travel.entity.Ward;
@@ -38,13 +38,13 @@ public class AddressServiceImpl implements AddressService {
         List<District> districts = districtRepository.findAll();
         BaseResponse response;
         if (districts.isEmpty()) {
-            response = new BaseResponse(CodeConstant.RESPONSE_FAIL, null, "Get district fail");
+            response = new BaseResponse(CommonConstant.RESPONSE_FAIL, null, "Get district fail");
             Log.debugLog(response);
             Log.endLog(SERVICE_NAME, METHOD_NAME);
            return response;
         }
         List<DistrictDTO> districtDtoList = convertDistrict(districts);
-        response = new BaseResponse(CodeConstant.RESPONSE_SUCCESS, districtDtoList, "Get district success");
+        response = new BaseResponse(CommonConstant.RESPONSE_SUCCESS, districtDtoList, "Get district success");
         Log.debugLog(response);
         Log.endLog(SERVICE_NAME, METHOD_NAME);
         return response;
@@ -57,13 +57,13 @@ public class AddressServiceImpl implements AddressService {
         List<Province> province = provinceRepository.findAll();
         BaseResponse response;
         if (province.isEmpty()) {
-            response = new BaseResponse(CodeConstant.RESPONSE_FAIL, null, "Get province fail");
+            response = new BaseResponse(CommonConstant.RESPONSE_FAIL, null, "Get province fail");
             Log.debugLog(response);
             Log.endLog(SERVICE_NAME, METHOD_NAME);
             return response;
         }
         List<ProvinceDTO> provinceDtoList = convertProvince(province);
-        response = new BaseResponse(CodeConstant.RESPONSE_SUCCESS, provinceDtoList, "Get province success");
+        response = new BaseResponse(CommonConstant.RESPONSE_SUCCESS, provinceDtoList, "Get province success");
         Log.debugLog(response);
         Log.endLog(SERVICE_NAME, METHOD_NAME);
         return response;
@@ -76,13 +76,13 @@ public class AddressServiceImpl implements AddressService {
         List<Ward> wards = wardRepository.findAll();
         BaseResponse response;
         if (wards.isEmpty()) {
-            response = new BaseResponse(CodeConstant.RESPONSE_FAIL, null, "Get ward fail");
+            response = new BaseResponse(CommonConstant.RESPONSE_FAIL, null, "Get ward fail");
             Log.debugLog(response);
             Log.endLog(SERVICE_NAME, METHOD_NAME);
             return response;
         }
         List<WardDTO> wardDtoList = convertWard(wards);
-        response = new BaseResponse(CodeConstant.RESPONSE_SUCCESS, wardDtoList, "Get ward success");
+        response = new BaseResponse(CommonConstant.RESPONSE_SUCCESS, wardDtoList, "Get ward success");
         Log.debugLog(response);
         Log.endLog(SERVICE_NAME, METHOD_NAME);
         return response;

@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -43,7 +43,9 @@ public class Trip extends HelperBy {
     @Column(name = "IMAGE")
     private String image;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "TRIP_DETAIL_ID", referencedColumnName = "ID")
-    private TripDetail tripDetail;
+    @Column(name = "OWNER")
+    private String owner;
+
+    @OneToMany(mappedBy = "trip")
+    private List<Member> members;
 }

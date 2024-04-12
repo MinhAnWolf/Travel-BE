@@ -20,5 +20,4 @@ public class InformationDTO {
     private String infoPhone;
     private String userId;
     private String provinceId;
-
 }

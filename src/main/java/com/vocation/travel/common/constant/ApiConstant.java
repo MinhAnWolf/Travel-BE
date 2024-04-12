@@ -11,6 +11,7 @@ public class ApiConstant {
     public final static String API_UPDATE = "/update";
     public final static String API_DELETE = "/delete";
     public final static String API_READ = "/read";
+    public final static String API_GET = "/get";
 
     //------------------------------------------- API AUTH -------------------------------------------------------------
     public final static String API_AUTH = "/auth";
@@ -24,7 +25,12 @@ public class ApiConstant {
     public final static String API_PROVINCE = "/province";
     public final static String API_WARD = "/ward";
 
-    //------------------------------------------- API ADDRESS ----------------------------------------------------------
+    //------------------------------------------- API TRIP -------------------------------------------------------------
     public final static String API_TRIP = "/trip";
+
+    //------------------------------------------- API INFORMATION ------------------------------------------------------
     public final static String API_INFORMATION = "/information";
+
+    //------------------------------------------- API MEMBER -----------------------------------------------------------
+    public final static String API_MEMBER = "/member";
 }
