@@ -1,6 +1,7 @@
 package com.vocation.travel.dto;
 
 import com.vocation.travel.entity.HelperBy;
+import com.vocation.travel.entity.Image;
 import com.vocation.travel.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,4 +24,5 @@ public class TripDTO extends HelperBy {
     private Date endDate;
     private String owner;
     private List<Member> members;
+    private List<ImageDTO> images;
 }

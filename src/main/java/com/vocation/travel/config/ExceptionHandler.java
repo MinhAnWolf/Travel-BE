@@ -22,11 +22,11 @@ public interface ExceptionHandler {
             apiError.setError(null);
         }
 
-        public SystemErrorException(String message, Exception e) {
+        public SystemErrorException(String message, String exception) {
             apiError = new ApiError();
             apiError.setMessage(message);
             apiError.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-            apiError.setError(e);
+            apiError.setError(exception);
         }
 
         @Override
@@ -49,11 +49,11 @@ public interface ExceptionHandler {
             apiError.setError(null);
         }
 
-        public BadRequestException(String message, Exception e) {
+        public BadRequestException(String message, String exception) {
             apiError = new ApiError();
             apiError.setMessage(message);
             apiError.setHttpStatus(HttpStatus.BAD_REQUEST);
-            apiError.setError(e);
+            apiError.setError(exception);
         }
 
         @Override

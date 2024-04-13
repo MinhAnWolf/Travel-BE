@@ -40,12 +40,12 @@ public class Trip extends HelperBy {
     @Column(name = "ID_DISTRICT")
     private Date idDistrict;
 
-    @Column(name = "IMAGE")
-    private String image;
-
     @Column(name = "OWNER")
     private String owner;
 
     @OneToMany(mappedBy = "trip")
     private List<Member> members;
+
+    @OneToMany(mappedBy = "trip")
+    private List<Image> images;
 }

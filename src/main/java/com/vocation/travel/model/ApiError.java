@@ -10,6 +10,6 @@ import org.springframework.http.HttpStatus;
 @Data
 public class ApiError {
     private HttpStatus httpStatus;
-    private Exception error;
+    private String error;
     private String message;
 }

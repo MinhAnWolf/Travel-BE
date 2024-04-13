@@ -4,11 +4,14 @@ import com.vocation.travel.common.Log;
 import com.vocation.travel.common.constant.CommonConstant;
 import com.vocation.travel.config.ExceptionHandler.*;
 import com.vocation.travel.config.Message;
+import com.vocation.travel.dto.ImageDTO;
 import com.vocation.travel.dto.MemberDTO;
 import com.vocation.travel.dto.TripDTO;
+import com.vocation.travel.entity.Image;
 import com.vocation.travel.entity.Member;
 import com.vocation.travel.entity.Trip;
 import com.vocation.travel.model.BaseResponse;
+import com.vocation.travel.repository.ImageRepository;
 import com.vocation.travel.repository.TripRepository;
 import com.vocation.travel.service.CRUD;
 import com.vocation.travel.service.MemberService;
@@ -18,6 +21,7 @@ import com.vocation.travel.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Date;
+import java.util.List;
 
 import static com.vocation.travel.common.constant.CommonConstant.RESPONSE_SUCCESS;
 
@@ -38,10 +42,14 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
     private CRUD<MemberDTO, BaseResponse> memberService;
 
     @Autowired
+    private CRUD<ImageDTO, BaseResponse> imageService;
+
+    @Autowired
     private MemberService memberServices;
 
     @Autowired
     private UserService userService;
+
     /**
      * Create trip.
      *
@@ -55,33 +63,37 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             Log.inputLog(request);
             checkInputParams(request, CommonConstant.METHOD_CREATE);
             validateTime(request.getStartDate(), request.getEndDate(), request, CommonConstant.METHOD_CREATE);
+
+            // register trip
             Trip trip = convertEntity(request, CommonConstant.METHOD_CREATE);
-            BaseResponse response;
             trip.setCreateBy(Utils.userSystem());
             trip.setUpdateBy(Utils.userSystem());
-            String idUser = userService.getUserByUserName().getUserId();
-            trip.setOwner(idUser);
             tripRepository.save(trip);
+
+            // register image
+            saveImage(request, trip);
+
+            // register member
             if (!request.getMembers().isEmpty()) {
                 for (Member member: request.getMembers()) {
                     MemberDTO memberDto = new MemberDTO();
                     memberDto.setTrip(trip);
                     memberDto.setRole(CommonConstant.RoleTrip.MEMBER);
                     memberDto.setIdUser(member.getIdUser());
-                    if (member.getIdUser().equals(idUser)) {
+                    if (member.getIdUser().equals(userService.getUserByUserName().getUserId())) {
                         memberDto.setRole(CommonConstant.RoleTrip.OWNER);
                     }
                     memberService.create(memberDto);
                 }
             }
-            response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("CrateSuccess"));
+            BaseResponse response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("CreateSuccess"));
             Log.outputLog(response);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             return response;
         } catch (Exception e) {
-            Log.outputLog(request);
+            Log.errorLog(e.getMessage());
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
-            throw new SystemErrorException(getMessage("CrateFail"), e);
+            throw new SystemErrorException(getMessage("CrateFail"));
         }
     }
 
@@ -102,7 +114,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_READ);
             return response;
         } catch (Exception e) {
-            Log.outputLog(request);
+            Log.errorLog(e.getMessage());
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_READ);
             throw new SystemErrorException(getMessage("ReadFail"));
         }
@@ -130,9 +142,9 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
             return response;
         } catch (Exception e) {
-            Log.outputLog(request);
+            Log.errorLog(e.getMessage());
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
-            throw new SystemErrorException(getMessage("UpdateFail"), e);
+            throw new SystemErrorException(getMessage("UpdateFail"));
         }
     }
 
@@ -159,9 +171,9 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_DELETE);
             return response;
         } catch (Exception e) {
-            Log.outputLog(request);
+            Log.errorLog(e.getMessage());
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_DELETE);
-            throw new SystemErrorException(getMessage("DeleteFail"), e);
+            throw new SystemErrorException(getMessage("DeleteFail"));
         }
 
     }
@@ -226,14 +238,13 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
     }
 
     private void setData(Trip trip, TripDTO request) {
-        trip.setImage(request.getImage());
         trip.setDescription(request.getDescription());
         trip.setTitle(request.getTitle());
         trip.setStartDate(request.getStartDate());
         trip.setEndDate(request.getEndDate());
         trip.setAddress(request.getAddress());
         trip.setMembers(request.getMembers());
-        trip.setOwner(request.getOwner());
+        trip.setOwner(userService.getUserByUserName().getUserId());
     }
 
     private void checkPermissionsTravel(TripDTO request) {
@@ -243,5 +254,19 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
         if (!inTravel && !isOwner) {
             throw new SystemErrorException(getMessage("Permissions"));
         }
+    }
+
+    private void saveImage(TripDTO request, Trip trip) {
+        try {
+            for (ImageDTO imageDto: request.getImages()) {
+                imageDto.setTrip(trip);
+                imageService.create(imageDto);
+            }
+        } catch (Exception e) {
+            Log.outputLog(request);
+            Log.endLog(SERVICE_NAME, "saveImage");
+            throw new SystemErrorException(getMessage("SaveImage"));
+        }
+
     }
 }
