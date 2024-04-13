@@ -11,4 +11,9 @@ public class CommonConstant {
         public static final String OWNER = "owner";
         public static final String MEMBER = "member";
     }
+
+    public static class ProcessStatus {
+        public static final boolean FAIL = Boolean.FALSE;
+        public static final boolean Success = Boolean.TRUE;
+    }
 }
