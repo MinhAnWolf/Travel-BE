@@ -119,7 +119,7 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
     } catch (Exception e) {
       Log.outputLog("Process: " + CommonConstant.ProcessStatus.Success);
       Log.endLog(SERVICE_NAME, METHOD_NAME);
-      throw new SystemErrorException(getMessage("SystemErr"));
+      throw new SystemErrorException(getMessage("SystemErr"), e);
     }
   }
 

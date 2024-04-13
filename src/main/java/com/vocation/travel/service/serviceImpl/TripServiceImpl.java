@@ -81,7 +81,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
         } catch (Exception e) {
             Log.outputLog(request);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
-            throw new SystemErrorException(getMessage("CrateFail"));
+            throw new SystemErrorException(getMessage("CrateFail"), e);
         }
     }
 
@@ -132,7 +132,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
         } catch (Exception e) {
             Log.outputLog(request);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
-            throw new SystemErrorException(getMessage("UpdateFail"));
+            throw new SystemErrorException(getMessage("UpdateFail"), e);
         }
     }
 
@@ -161,7 +161,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
         } catch (Exception e) {
             Log.outputLog(request);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_DELETE);
-            throw new SystemErrorException(getMessage("DeleteFail"));
+            throw new SystemErrorException(getMessage("DeleteFail"), e);
         }
 
     }
