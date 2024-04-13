@@ -1,5 +1,6 @@
 package com.vocation.travel.service.serviceImpl;
 
+import com.vocation.travel.common.Log;
 import com.vocation.travel.common.constant.CommonConstant;
 import com.vocation.travel.config.ExceptionHandler.BadRequestException;
 import com.vocation.travel.config.ExceptionHandler.SystemErrorException;
@@ -30,6 +31,8 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
   @Autowired
   private InformationRepository infoRepository;
 
+  private final String SERVICE_NAME = "MemberService";
+
   /**
    * Add member to trip.
    *
@@ -38,9 +41,15 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
    * */
   @Override
   public BaseResponse create(MemberDTO request) {
+    Log.startLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
+    Log.inputLog(request);
     checkInputParams(request);
     memberRepository.save(convertEntity(request));
-    return new BaseResponse(CommonConstant.RESPONSE_SUCCESS, Boolean.TRUE, getMessage("GetMemberSuccess"));
+    BaseResponse baseResponse = new BaseResponse(CommonConstant.RESPONSE_SUCCESS,
+            Boolean.TRUE, getMessage("GetMemberSuccess"));
+    Log.outputLog(baseResponse);
+    Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
+    return baseResponse;
   }
 
   @Override
@@ -55,8 +64,13 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
 
   @Override
   public BaseResponse delete(MemberDTO request) {
+    Log.startLog(SERVICE_NAME, CommonConstant.METHOD_DELETE);
+    Log.inputLog(request);
     memberRepository.delete(convertEntity(request));
-    return new BaseResponse(CommonConstant.RESPONSE_SUCCESS, Boolean.TRUE, getMessage("DeleteSuccess"));
+    BaseResponse baseResponse = new BaseResponse(CommonConstant.RESPONSE_SUCCESS, Boolean.TRUE, getMessage("DeleteSuccess"));
+    Log.outputLog(baseResponse);
+    Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
+    return baseResponse;
   }
 
   /**
@@ -68,6 +82,10 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
    * */
   @Override
   public List<MemberDTO> getMemberByTravelId(String idMember, String idTravel) {
+    String METHOD_NAME = "getMemberByTravelId";
+    Log.startLog(SERVICE_NAME, METHOD_NAME);
+    Log.inputLog(idMember);
+    Log.inputLog(idTravel);
     if (checkMemberInTrip(idMember, idTravel)) {
       throw new SystemErrorException(getMessage("GetMemberFail"));
     }
@@ -78,14 +96,29 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
       InformationDTO infoDto = infoRepository.getInformationByUserId(memberDto.getIdUser());
       memberDto.setInformationDTO(infoDto);
     }
+    Log.outputLog(list);
+    Log.endLog(SERVICE_NAME, METHOD_NAME);
     return list;
   }
 
+  /**
+   * Check user in trip.
+   *
+   * @param userId String
+   * @param idTravel String
+   * @return boolean
+   * */
   @Override
   public boolean checkUserInTravel(String userId, String idTravel) {
+    String METHOD_NAME = "checkUserInTravel";
+    Log.startLog(SERVICE_NAME, METHOD_NAME);
+    Log.inputLog(userId);
+    Log.inputLog(idTravel);
     try {
       return memberRepository.checkUserIdInTrip(userId, idTravel) > 0;
     } catch (Exception e) {
+      Log.outputLog("Process: " + CommonConstant.ProcessStatus.Success);
+      Log.endLog(SERVICE_NAME, METHOD_NAME);
       throw new SystemErrorException(getMessage("SystemErr"));
     }
   }

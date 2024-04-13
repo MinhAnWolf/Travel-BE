@@ -3,6 +3,7 @@ package com.vocation.travel.controller;
 import com.vocation.travel.common.constant.ApiConstant;
 import com.vocation.travel.dto.InformationDTO;
 import com.vocation.travel.entity.Information;
+import com.vocation.travel.model.BaseResponse;
 import com.vocation.travel.service.CRUD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class InformationController {
 
     @Autowired
-    private CRUD<InformationDTO, Information> informationService;
+    private CRUD<InformationDTO, BaseResponse> informationService;
 
     @PostMapping(ApiConstant.API_CREATE)
     public ResponseEntity<?> create(@RequestBody InformationDTO informationDTO){
