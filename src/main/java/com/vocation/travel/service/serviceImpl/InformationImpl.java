@@ -39,7 +39,7 @@ public class InformationImpl extends Message implements CRUD<InformationDTO, Bas
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             return baseResponse;
         } catch (Exception ex) {
-            Log.outputLog(request);
+            Log.errorLog(ex.getMessage());
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             throw new BadRequestException(getMessage("CrateFail"));
         }
@@ -55,7 +55,7 @@ public class InformationImpl extends Message implements CRUD<InformationDTO, Bas
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_READ);
             return baseResponse;
         } catch (Exception ex) {
-            Log.outputLog(request);
+            Log.errorLog(ex.getMessage());
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_READ);
             throw new BadRequestException(getMessage("readFail"));
         }
@@ -75,7 +75,7 @@ public class InformationImpl extends Message implements CRUD<InformationDTO, Bas
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
             return baseResponse;
         } catch (Exception ex) {
-            Log.outputLog(request);
+            Log.errorLog(ex.getMessage());
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
             throw new BadRequestException(getMessage("updateFail"));
         }

@@ -117,9 +117,9 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
     try {
       return memberRepository.checkUserIdInTrip(userId, idTravel) > 0;
     } catch (Exception e) {
-      Log.outputLog("Process: " + CommonConstant.ProcessStatus.Success);
+      Log.errorLog(e.getMessage());
       Log.endLog(SERVICE_NAME, METHOD_NAME);
-      throw new SystemErrorException(getMessage("SystemErr"), e);
+      throw new SystemErrorException(getMessage("SystemErr"));
     }
   }
 
@@ -134,7 +134,7 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
 
   private void checkInputParams(MemberDTO memberDTO) {
       if (Objects.isNull(memberDTO) || Objects.isNull(memberDTO.getRole())
-      || Objects.isNull(memberDTO.getIdTrip()) || Objects.isNull(memberDTO.getIdUser())) {
+          || Objects.isNull(memberDTO.getIdUser())) {
         throw new BadRequestException(getMessage("RequestFail"));
       }
   }
