@@ -19,12 +19,19 @@ public interface ExceptionHandler {
             apiError = new ApiError();
             apiError.setMessage(message);
             apiError.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-            apiError.setError(HttpStatus.INTERNAL_SERVER_ERROR);
+            apiError.setError(null);
+        }
+
+        public SystemErrorException(String message, Exception e) {
+            apiError = new ApiError();
+            apiError.setMessage(message);
+            apiError.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            apiError.setError(e);
         }
 
         @Override
         public ResponseEntity<ApiError> outputError() {
-            return new ResponseEntity<>(apiError, apiError.getError());
+            return new ResponseEntity<>(apiError, apiError.getHttpStatus());
         }
     }
 
@@ -39,12 +46,19 @@ public interface ExceptionHandler {
             apiError = new ApiError();
             apiError.setMessage(message);
             apiError.setHttpStatus(HttpStatus.BAD_REQUEST);
-            apiError.setError(HttpStatus.BAD_REQUEST);
+            apiError.setError(null);
+        }
+
+        public BadRequestException(String message, Exception e) {
+            apiError = new ApiError();
+            apiError.setMessage(message);
+            apiError.setHttpStatus(HttpStatus.BAD_REQUEST);
+            apiError.setError(e);
         }
 
         @Override
         public ResponseEntity<ApiError> outputError() {
-            return new ResponseEntity<>(apiError, apiError.getError());
+            return new ResponseEntity<>(apiError, apiError.getHttpStatus());
         }
     }
 }
