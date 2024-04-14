@@ -1,18 +1,13 @@
 package com.vocation.travel.entity;
 
 import java.util.List;
+
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 
 /**
  * Table Users.
@@ -49,4 +44,7 @@ public class User {
   private String role;
 
   private String rememberPassword;
+
+  @OneToMany(mappedBy = "users")
+  private List<Friend> friends;
 }
