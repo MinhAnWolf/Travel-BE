@@ -23,4 +23,7 @@ public class Friend {
 
     @Column(name = "MY_FRIEND")
     private String myFriend;
+
+    @Column(name = "STATUS")
+    private String status;
 }

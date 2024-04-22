@@ -45,6 +45,6 @@ public class User {
 
   private String rememberPassword;
 
-  @OneToMany(mappedBy = "users")
+  @OneToMany(mappedBy = "user")
   private List<Friend> friends;
 }

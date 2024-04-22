@@ -14,4 +14,5 @@ public class FriendDTO {
     private String id;
     private User user;
     private String myFriend;
+    private String status;
 }
