@@ -1,4 +1,4 @@
-package com.vocation.travel.notification.config;
+package com.vocation.travel.config;
 
 import org.apache.qpid.proton.engine.Receiver;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -74,6 +74,11 @@ public class MqConfig {
     rabbitTemplate.setMessageConverter(converter());
     return rabbitTemplate;
   }
+
+//  @Bean
+//  MessageListenerAdapter listenerAdapter(Receiver receiver) {
+//    return new MessageListenerAdapter(receiver, "receiveMessage");
+//  }
 
 //  @Bean
 //  SimpleMessageListenerContainer container(ConnectionFactory connectionFactory,

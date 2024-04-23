@@ -9,6 +9,7 @@ import com.vocation.travel.config.Message;
 import com.vocation.travel.dto.FriendDTO;
 import com.vocation.travel.entity.Friend;
 import com.vocation.travel.model.BaseResponse;
+import com.vocation.travel.notification.service.NotificationService;
 import com.vocation.travel.repository.FriendRepository;
 import com.vocation.travel.service.CRUD;
 import com.vocation.travel.util.Utils;
@@ -21,8 +22,10 @@ public class FriendServiceImpl extends Message implements CRUD<FriendDTO, BaseRe
     @Autowired
     private FriendRepository friendRepository;
 
-    private final String SERVICE_NAME = "MemberService";
+    @Autowired
+    private NotificationService notificationService;
 
+    private final String SERVICE_NAME = "FriendService";
 
     @Override
     public BaseResponse create(FriendDTO request) {
@@ -33,6 +36,8 @@ public class FriendServiceImpl extends Message implements CRUD<FriendDTO, BaseRe
             friendRepository.save(convertEntity(request, StatusFriend.PENDING));
             BaseResponse response = new BaseResponse(CommonConstant.RESPONSE_SUCCESS,
                 ProcessStatus.Success, getMessage("CreateSuccess"));
+            notificationService.sendNotification(request.getUser().getUserId(), request.getUser().getUserId(),
+                getMessage("NotificationFriend", new Object[]{Utils.userSystem()}));
             Log.outputLog(response);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
             return response;
