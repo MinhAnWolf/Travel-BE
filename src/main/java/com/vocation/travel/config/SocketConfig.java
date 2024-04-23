@@ -1,6 +1,7 @@
 package com.vocation.travel.config;
 
 import com.vocation.travel.security.FilterService;
+import com.vocation.travel.security.FilterSocket;
 import com.vocation.travel.socket.SocketHandle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,12 +15,12 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 @EnableWebSocket
 public class SocketConfig implements WebSocketConfigurer {
   @Autowired
-  private FilterService filterService;
+  private FilterSocket filterSocket;
 
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-    registry.addHandler(getDataHandler(), "/friend")
-        .addInterceptors((HandshakeInterceptor) filterService);
+    registry.addHandler(getDataHandler(), "/add-friend")
+        .addInterceptors(filterSocket);
   }
 
   @Bean

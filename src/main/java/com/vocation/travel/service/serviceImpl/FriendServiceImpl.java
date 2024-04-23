@@ -33,13 +33,14 @@ public class FriendServiceImpl extends Message implements CRUD<FriendDTO, BaseRe
         Log.inputLog(request);
         checkInputParams(request);
         try {
+            request.setMyFriend(Utils.userSystem());
             friendRepository.save(convertEntity(request, StatusFriend.PENDING));
             BaseResponse response = new BaseResponse(CommonConstant.RESPONSE_SUCCESS,
                 ProcessStatus.Success, getMessage("CreateSuccess"));
             notificationService.sendNotification(request.getUser().getUserId(), request.getUser().getUserId(),
                 getMessage("NotificationFriend", new Object[]{Utils.userSystem()}));
             Log.outputLog(response);
-            Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
+            Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             return response;
         } catch (Exception e) {
             Log.errorLog(e.getMessage());
@@ -91,7 +92,7 @@ public class FriendServiceImpl extends Message implements CRUD<FriendDTO, BaseRe
     private Friend convertEntity(FriendDTO request, String statusFriend) {
         Friend friend = new Friend();
         friend.setMyFriend(request.getMyFriend());
-        friend.setId(Utils.userSystem());
+        friend.setUser(request.getUser());
         friend.setStatus(statusFriend);
         return friend;
     }

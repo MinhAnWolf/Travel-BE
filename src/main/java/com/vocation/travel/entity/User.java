@@ -3,11 +3,7 @@ package com.vocation.travel.entity;
 import java.util.List;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Table Users.
@@ -23,6 +19,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)

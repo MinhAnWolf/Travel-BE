@@ -22,4 +22,9 @@ public class CommonConstant {
         public static final String PENDING = "pending";
         public static final String DELETE = "delete";
     }
+
+    public static class Notification {
+        public static final String NOTI_FRIEND = "NOTI-FRIEND";
+        public static final String NOTI_SYSTEM = "NOTI-SYSTEM";
+    }
 }

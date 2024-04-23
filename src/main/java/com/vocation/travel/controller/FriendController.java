@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(ApiConstant.API_ADDRESS)
+@RequestMapping(ApiConstant.API_FRIEND)
 public class FriendController {
   @Autowired
   private CRUD<FriendDTO, BaseResponse> friendService;
