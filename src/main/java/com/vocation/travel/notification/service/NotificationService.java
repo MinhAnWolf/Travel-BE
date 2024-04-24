@@ -13,21 +13,24 @@ public class NotificationService {
   @Value("${rabbitmq.exchange.name}")
   private String exChange;
 
-  @Value("${rabbitmq.queue.json.key}")
-  private String routingJsonKey;
+//  @Value("${rabbitmq.queue.json.key}")
+//  private String routingJsonKey;
+
+  @Value("${rabbitmq.key.name}")
+  private String routing;
 
   @Autowired
   private RabbitTemplate rabbitTemplate;
 
   private final CountDownLatch latch = new CountDownLatch(1);
 
-  @RabbitListener()
+  @RabbitListener(queues = "${rabbitmq.queue.name}")
   public void receiveNotification(String message) {
     System.out.println("Received <" + message + ">");
     latch.countDown();
   }
 
-  public void sendNotification(String exChange, String routing, String requestMessage) {
+  public void sendNotification(String requestMessage) {
     rabbitTemplate.convertAndSend(exChange, routing, requestMessage);
   }
 }

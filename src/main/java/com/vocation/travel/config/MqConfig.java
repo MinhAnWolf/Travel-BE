@@ -21,8 +21,8 @@ public class MqConfig {
   @Value("${rabbitmq.queue.name}")
   private String queue;
 
-  @Value("${rabbitmq.queue.json.name}")
-  private String jsonQueue;
+//  @Value("${rabbitmq.queue.json.name}")
+//  private String jsonQueue;
 
   @Value("${rabbitmq.exchange.name}")
   private String exchange;
@@ -30,18 +30,18 @@ public class MqConfig {
   @Value("${rabbitmq.key.name}")
   private String routingKey;
 
-  @Value("${rabbitmq.queue.json.key}")
-  private String jsonRoutingKey;
+//  @Value("${rabbitmq.queue.json.key}")
+//  private String jsonRoutingKey;
 
   @Bean
   public Queue queue() {
     return new Queue(queue);
   }
 
-  @Bean
-  public Queue queueJson() {
-    return new Queue(jsonQueue);
-  }
+//  @Bean
+//  public Queue queueJson() {
+//    return new Queue(jsonQueue);
+//  }
   @Bean
   public TopicExchange exchange() {
     return new TopicExchange(exchange);
@@ -55,13 +55,13 @@ public class MqConfig {
         .with(routingKey);
   }
 
-  @Bean
-  public Binding jsonBinding() {
-    return BindingBuilder
-        .bind(queueJson())
-        .to(exchange())
-        .with(jsonRoutingKey);
-  }
+//  @Bean
+//  public Binding jsonBinding() {
+//    return BindingBuilder
+//        .bind(queueJson())
+//        .to(exchange())
+//        .with(jsonRoutingKey);
+//  }
 
   @Bean
   public MessageConverter converter() {

@@ -5,7 +5,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 public class SocketHandle extends TextWebSocketHandler {
-  @RabbitListener()
+  @RabbitListener(queues = "${rabbitmq.queue.name}")
   public void handleMessage(RequestMessage requestMessage) {
     System.out.println("Socket handle");
     System.out.println(requestMessage);

@@ -8,12 +8,14 @@ import com.vocation.travel.config.ExceptionHandler.SystemErrorException;
 import com.vocation.travel.config.Message;
 import com.vocation.travel.dto.FriendDTO;
 import com.vocation.travel.entity.Friend;
+import com.vocation.travel.entity.User;
 import com.vocation.travel.model.BaseResponse;
 import com.vocation.travel.notification.service.NotificationService;
 import com.vocation.travel.repository.FriendRepository;
+import com.vocation.travel.repository.UserRepository;
 import com.vocation.travel.service.CRUD;
 import com.vocation.travel.util.Utils;
-import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,9 @@ public class FriendServiceImpl extends Message implements CRUD<FriendDTO, BaseRe
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private final String SERVICE_NAME = "FriendService";
 
     @Override
@@ -32,13 +37,14 @@ public class FriendServiceImpl extends Message implements CRUD<FriendDTO, BaseRe
         Log.startLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
         Log.inputLog(request);
         checkInputParams(request);
+        checkAddYourSelf(request);
+        checkAddDuplicate(request);
         try {
             request.setMyFriend(Utils.userSystem());
             friendRepository.save(convertEntity(request, StatusFriend.PENDING));
             BaseResponse response = new BaseResponse(CommonConstant.RESPONSE_SUCCESS,
                 ProcessStatus.Success, getMessage("CreateSuccess"));
-            notificationService.sendNotification(request.getUser().getUserId(), request.getUser().getUserId(),
-                getMessage("NotificationFriend", new Object[]{Utils.userSystem()}));
+            notificationService.sendNotification(getMessage("NotificationFriend", new Object[]{Utils.userSystem()}));
             Log.outputLog(response);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             return response;
@@ -99,5 +105,21 @@ public class FriendServiceImpl extends Message implements CRUD<FriendDTO, BaseRe
 
     private void checkInputParams(FriendDTO request) {
 
+    }
+
+    private void checkAddDuplicate(FriendDTO request) {
+      int check = friendRepository.checkUserAdded(request.getUser().getUserId());
+      if (check > 0) {
+        throw new SystemErrorException(getMessage("ExistFriend"));
+      }
+    }
+
+    private void checkAddYourSelf(FriendDTO request) {
+      Optional<User> user = userRepository.findByUsername(Utils.userSystem());
+      if(user.isPresent()) {
+        if (request.getUser().getUserId().equals(user.get().getUserId())) {
+          throw new SystemErrorException(getMessage("AddFriendSelf"));
+        }
+      }
     }
 }
