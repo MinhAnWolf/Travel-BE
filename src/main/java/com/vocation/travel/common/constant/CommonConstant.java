@@ -16,4 +16,15 @@ public class CommonConstant {
         public static final boolean FAIL = Boolean.FALSE;
         public static final boolean Success = Boolean.TRUE;
     }
+
+    public static class StatusFriend {
+        public static final String ACTIVE = "active";
+        public static final String PENDING = "pending";
+        public static final String DELETE = "delete";
+    }
+
+    public static class Notification {
+        public static final String NOTI_FRIEND = "NOTI-FRIEND";
+        public static final String NOTI_SYSTEM = "NOTI-SYSTEM";
+    }
 }

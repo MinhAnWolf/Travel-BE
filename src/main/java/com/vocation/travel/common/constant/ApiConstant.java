@@ -12,6 +12,7 @@ public class ApiConstant {
     public final static String API_DELETE = "/delete";
     public final static String API_READ = "/read";
     public final static String API_GET = "/get";
+    public final static String API_ADD = "/add";
 
     //------------------------------------------- API AUTH -------------------------------------------------------------
     public final static String API_AUTH = "/auth";
@@ -33,4 +34,11 @@ public class ApiConstant {
 
     //------------------------------------------- API MEMBER -----------------------------------------------------------
     public final static String API_MEMBER = "/member";
+
+    //------------------------------------------- API MEMBER -----------------------------------------------------------
+    public final static String API_FRIEND = "/friend";
+
+    //------------------------------------------- API NOTIFICATION -----------------------------------------------------
+    public final static String API_NOTIFICATION = "/notification";
+    public final static String API_NOTIFICATION_FRIEND = API_NOTIFICATION + API_FRIEND + API_ADD;
 }
