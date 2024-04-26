@@ -33,11 +33,11 @@ public class NotificationService {
 
   @RabbitListener(queues = "${rabbitmq.queue.name}")
   public void receiveNotification(RequestMessage requestMessage) {
-    for ()
-    System.out.println("Received <" + message + ">");
-    WebSocket webSocket = new WebSocket(requestMessage.getClientReceives());
-    socketHandle.handleMessage(WebSocket session, WebSocket.);
-    latch.countDown();
+//    for ()
+//    System.out.println("Received <" + message + ">");
+//    WebSocket webSocket = new WebSocket(requestMessage.getClientReceives());
+//    socketHandle.handleMessage(WebSocket session, WebSocket.);
+//    latch.countDown();
   }
 
   public void sendNotification(String requestMessage) {
