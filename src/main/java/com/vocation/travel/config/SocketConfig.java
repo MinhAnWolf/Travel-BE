@@ -1,5 +1,6 @@
 package com.vocation.travel.config;
 
+import com.vocation.travel.common.constant.ApiConstant;
 import com.vocation.travel.security.FilterSocket;
 import com.vocation.travel.socket.SocketHandle;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class SocketConfig implements WebSocketConfigurer {
 
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-    registry.addHandler(getDataHandler(), "/add-friend")
+    registry.addHandler(getDataHandler(), ApiConstant.API_NOTIFICATION_FRIEND)
         .addInterceptors(filterSocket);
   }
 

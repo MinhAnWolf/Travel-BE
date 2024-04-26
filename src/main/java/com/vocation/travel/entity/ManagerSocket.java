@@ -18,8 +18,6 @@ import jakarta.persistence.Id;
 public class ManagerSocket {
   @GeneratedValue(strategy = GenerationType.UUID)
   @Id
-  @Column(name = "ID")
-  private String id;
   private String userId;
   private String sessionId;
 }

@@ -9,12 +9,15 @@ import com.vocation.travel.service.UserService;
 import com.vocation.travel.util.Utils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+@Service
 public class SocketHandle extends TextWebSocketHandler {
   @Autowired
   private CRUD<ManagerSocketDTO, BaseResponse> managerSocketService;
@@ -22,18 +25,15 @@ public class SocketHandle extends TextWebSocketHandler {
   @Autowired
   private UserService userService;
 
-  @RabbitListener(queues = "${rabbitmq.queue.name}")
-  public void handleMessage(String message) {
-    System.out.println("Socket handle");
-    System.out.println(message);
-  }
-
   @Override
   public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-    System.out.println("After connection");
+    String uId = session.getHandshakeHeaders().getFirst("c_id");
+    if (Utils.isEmpty(uId)) {
+      session.close(CloseStatus.BAD_DATA);
+    }
     ManagerSocketDTO managerSocketDto = new ManagerSocketDTO();
     managerSocketDto.setSessionId(session.getId());
-    managerSocketDto.setUserId(userService.getIdUserByUserName());
+    managerSocketDto.setUserId(uId);
     if (checkInputParams(managerSocketDto)) {
       session.close(CloseStatus.BAD_DATA);
     }
@@ -43,7 +43,8 @@ public class SocketHandle extends TextWebSocketHandler {
 
   @Override
   public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-    System.out.println("handleMessage");
+    String uId = session.getHandshakeHeaders().getFirst("c_id");
+    session.sendMessage(message);
     super.handleMessage(session, message);
   }
 
