@@ -49,7 +49,7 @@ public class FriendServiceImpl extends Message implements CRUD<FriendDTO, BaseRe
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             return response;
         } catch (Exception e) {
-            Log.errorLog(e.getMessage());
+            Log.errorLog(e);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             throw new SystemErrorException(getMessage("SystemErr"));
         }
@@ -66,7 +66,7 @@ public class FriendServiceImpl extends Message implements CRUD<FriendDTO, BaseRe
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
             return response;
         } catch (Exception e) {
-            Log.errorLog(e.getMessage());
+            Log.errorLog(e);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             throw new SystemErrorException(getMessage("SystemErr"));
         }
@@ -89,7 +89,7 @@ public class FriendServiceImpl extends Message implements CRUD<FriendDTO, BaseRe
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_DELETE);
             return response;
         } catch (Exception e) {
-            Log.errorLog(e.getMessage());
+            Log.errorLog(e);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             throw new SystemErrorException(getMessage("SystemErr"));
         }
