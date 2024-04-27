@@ -38,7 +38,7 @@ public class Log {
         log.error("ERROR: ", exception);
     }
 
-    public static void errorLog(String message) {
+    public static void errorLog(Object message) {
         log.error("ERROR: {}", message);
     }
 }

@@ -1,16 +1,20 @@
 package com.vocation.travel.model;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+import lombok.*;
+
+/**
+ * Model request by socket client.
+ *
+ * @author Minh An
+ * @version 0.0.1
+ * */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class RequestMessage {
   private String idClient;
   private List<String> clientReceives;
