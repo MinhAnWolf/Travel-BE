@@ -41,15 +41,21 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
    * */
   @Override
   public BaseResponse create(MemberDTO request) {
-    Log.startLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
-    Log.inputLog(request);
-    checkInputParams(request);
-    memberRepository.save(convertEntity(request));
-    BaseResponse baseResponse = new BaseResponse(CommonConstant.RESPONSE_SUCCESS,
-            Boolean.TRUE, getMessage("GetMemberSuccess"));
-    Log.outputLog(baseResponse);
-    Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
-    return baseResponse;
+    try {
+      Log.startLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
+      Log.inputLog(request);
+      checkInputParams(request);
+      memberRepository.save(convertEntity(request));
+      BaseResponse baseResponse = new BaseResponse(CommonConstant.RESPONSE_SUCCESS,
+              Boolean.TRUE, getMessage("GetMemberSuccess"));
+      Log.outputLog(baseResponse);
+      Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
+      return baseResponse;
+    } catch (Exception e) {
+      Log.errorLog(e);
+      Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
+      throw new SystemErrorException(getMessage("SystemErr"));
+    }
   }
 
   @Override
@@ -117,7 +123,7 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
     try {
       return memberRepository.checkUserIdInTrip(userId, idTravel) > 0;
     } catch (Exception e) {
-      Log.errorLog(e.getMessage());
+      Log.errorLog(e);
       Log.endLog(SERVICE_NAME, METHOD_NAME);
       throw new SystemErrorException(getMessage("SystemErr"));
     }
