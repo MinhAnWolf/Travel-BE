@@ -37,7 +37,7 @@ public class ManagerSocketServiceImpl extends Message implements CRUD<ManagerSoc
       Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
       return response;
     } catch (Exception e) {
-      Log.errorLog(e.getMessage());
+      Log.errorLog(e);
       Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
       throw new SystemErrorException(getMessage("SystemErr"));
     }

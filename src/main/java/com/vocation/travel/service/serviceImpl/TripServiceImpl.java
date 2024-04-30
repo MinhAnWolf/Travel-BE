@@ -71,27 +71,32 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             tripRepository.save(trip);
 
             // register image
-            saveImage(request, trip);
+            if (!Utils.objNull(request.getImages())) {
+                saveImage(request, trip);
+            }
 
             // register member
-            if (!request.getMembers().isEmpty()) {
-                for (Member member: request.getMembers()) {
-                    MemberDTO memberDto = new MemberDTO();
-                    memberDto.setTrip(trip);
-                    memberDto.setRole(CommonConstant.RoleTrip.MEMBER);
-                    memberDto.setIdUser(member.getIdUser());
-                    if (member.getIdUser().equals(userService.getUserByUserName().getUserId())) {
-                        memberDto.setRole(CommonConstant.RoleTrip.OWNER);
+            if (!Utils.objNull(request.getMembers())) {
+                if (!request.getMembers().isEmpty()) {
+                    for (Member member: request.getMembers()) {
+                        MemberDTO memberDto = new MemberDTO();
+                        memberDto.setTrip(trip);
+                        memberDto.setRole(CommonConstant.RoleTrip.MEMBER);
+                        memberDto.setIdUser(member.getIdUser());
+                        if (member.getIdUser().equals(userService.getUserByUserName().getUserId())) {
+                            memberDto.setRole(CommonConstant.RoleTrip.OWNER);
+                        }
+                        memberService.create(memberDto);
                     }
-                    memberService.create(memberDto);
                 }
             }
+
             BaseResponse response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("CreateSuccess"));
             Log.outputLog(response);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             return response;
         } catch (Exception e) {
-            Log.errorLog(e.getMessage());
+            Log.errorLog(e);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             throw new SystemErrorException(getMessage("CrateFail"));
         }
@@ -114,7 +119,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_READ);
             return response;
         } catch (Exception e) {
-            Log.errorLog(e.getMessage());
+            Log.errorLog(e);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_READ);
             throw new SystemErrorException(getMessage("ReadFail"));
         }
@@ -142,7 +147,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
             return response;
         } catch (Exception e) {
-            Log.errorLog(e.getMessage());
+            Log.errorLog(e);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
             throw new SystemErrorException(getMessage("UpdateFail"));
         }
@@ -171,7 +176,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_DELETE);
             return response;
         } catch (Exception e) {
-            Log.errorLog(e.getMessage());
+            Log.errorLog(e);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_DELETE);
             throw new SystemErrorException(getMessage("DeleteFail"));
         }
