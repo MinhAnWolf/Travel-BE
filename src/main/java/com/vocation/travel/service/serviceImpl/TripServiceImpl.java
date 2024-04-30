@@ -268,7 +268,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
                 imageService.create(imageDto);
             }
         } catch (Exception e) {
-            Log.outputLog(request);
+            Log.errorLog(e);
             Log.endLog(SERVICE_NAME, "saveImage");
             throw new SystemErrorException(getMessage("SaveImage"));
         }

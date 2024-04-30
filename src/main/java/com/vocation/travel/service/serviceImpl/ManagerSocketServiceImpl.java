@@ -10,10 +10,15 @@ import com.vocation.travel.entity.ManagerSocket;
 import com.vocation.travel.model.BaseResponse;
 import com.vocation.travel.repository.ManagerSocketRepository;
 import com.vocation.travel.service.CRUD;
-import org.apache.catalina.Manager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Manager Socket Service.
+ *
+ * @author Minh An
+ * @version 0.0.1
+ * */
 @Service
 public class ManagerSocketServiceImpl extends Message implements CRUD<ManagerSocketDTO, BaseResponse> {
   @Autowired
@@ -50,7 +55,20 @@ public class ManagerSocketServiceImpl extends Message implements CRUD<ManagerSoc
 
   @Override
   public BaseResponse delete(ManagerSocketDTO request) {
-    return null;
+    Log.startLog(SERVICE_NAME, CommonConstant.METHOD_DELETE);
+    Log.inputLog(request);
+    try {
+      managerSocketRepository.delete(convertEntity(request));
+      BaseResponse response = new BaseResponse(CommonConstant.RESPONSE_SUCCESS,
+              ProcessStatus.Success, getMessage("DeleteSuccess"));
+      Log.outputLog(response);
+      Log.endLog(SERVICE_NAME, CommonConstant.METHOD_DELETE);
+      return response;
+    } catch (Exception e) {
+      Log.errorLog(e.getMessage());
+      Log.endLog(SERVICE_NAME, CommonConstant.METHOD_DELETE);
+      throw new SystemErrorException(getMessage("SystemErr"));
+    }
   }
 
   private ManagerSocket convertEntity(ManagerSocketDTO request) {

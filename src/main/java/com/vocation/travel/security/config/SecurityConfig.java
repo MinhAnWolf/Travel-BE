@@ -70,7 +70,6 @@ public class SecurityConfig {
      * @return SecurityFilterChain
      * */
     @Bean
-    @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> {
