@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.Map;
 
 @Component
-@Order(1)
 public class FilterService extends OncePerRequestFilter {
     private final String REFRESH = "rf";
     private final String AUTHORIZATION = "Authorization";

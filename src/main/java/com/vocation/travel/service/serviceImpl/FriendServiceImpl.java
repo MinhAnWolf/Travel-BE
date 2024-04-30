@@ -15,6 +15,8 @@ import com.vocation.travel.repository.FriendRepository;
 import com.vocation.travel.repository.UserRepository;
 import com.vocation.travel.service.CRUD;
 import com.vocation.travel.util.Utils;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,7 +63,7 @@ public class FriendServiceImpl extends Message implements CRUD<FriendDTO, BaseRe
         Log.inputLog(request);
         try {
             BaseResponse response = new BaseResponse(CommonConstant.RESPONSE_SUCCESS,
-                friendRepository.getListFriendActive(Utils.userSystem()), getMessage("ReadSuccess"));
+                repoConvertDto(friendRepository.getListFriendActive(Utils.userSystem())), getMessage("ReadSuccess"));
             Log.outputLog(response);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
             return response;
@@ -121,5 +123,19 @@ public class FriendServiceImpl extends Message implements CRUD<FriendDTO, BaseRe
           throw new SystemErrorException(getMessage("AddFriendSelf"));
         }
       }
+    }
+
+    private List<FriendDTO> repoConvertDto(List<Object[]> list) {
+        List<FriendDTO> friendDtoList = new ArrayList<>();
+        for (Object[] result: list) {
+            FriendDTO friendDto = new FriendDTO();
+            User user = new User();
+            user.setUsername(String.valueOf(result[0]));
+            user.setUserId(String.valueOf(result[1]));
+            friendDto.setUser(user);
+            friendDto.setId(String.valueOf(result[2]));
+            friendDtoList.add(friendDto);
+        }
+        return friendDtoList;
     }
 }

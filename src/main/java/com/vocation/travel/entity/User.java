@@ -1,5 +1,6 @@
 package com.vocation.travel.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -20,6 +21,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,6 +37,7 @@ public class User {
   private String email;
 
   @NonNull
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private String password;
 
   @NonNull
