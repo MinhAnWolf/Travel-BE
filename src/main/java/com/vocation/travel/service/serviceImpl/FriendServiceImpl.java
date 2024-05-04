@@ -10,12 +10,15 @@ import com.vocation.travel.dto.FriendDTO;
 import com.vocation.travel.entity.Friend;
 import com.vocation.travel.entity.User;
 import com.vocation.travel.model.BaseResponse;
+import com.vocation.travel.model.Notification;
 import com.vocation.travel.notification.service.NotificationService;
 import com.vocation.travel.repository.FriendRepository;
 import com.vocation.travel.repository.UserRepository;
 import com.vocation.travel.service.CRUD;
 import com.vocation.travel.util.Utils;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,12 @@ public class FriendServiceImpl extends Message implements CRUD<FriendDTO, BaseRe
 
     private final String SERVICE_NAME = "FriendService";
 
+    /**
+     * Add friend.
+     *
+     * @param request FriendDTO
+     * @return BaseResponse
+     * */
     @Override
     public BaseResponse create(FriendDTO request) {
         Log.startLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
@@ -46,7 +55,11 @@ public class FriendServiceImpl extends Message implements CRUD<FriendDTO, BaseRe
             friendRepository.save(convertEntity(request, StatusFriend.PENDING));
             BaseResponse response = new BaseResponse(CommonConstant.RESPONSE_SUCCESS,
                 ProcessStatus.Success, getMessage("CreateSuccess"));
-            notificationService.sendNotification(getMessage("NotificationFriend", new Object[]{Utils.userSystem()}));
+            //set value notification
+            Notification notification = new Notification();
+            notification.setMessage(getMessage("NotificationFriend", new Object[]{Utils.userSystem()}));
+            notification.setReceiveUserId(Collections.singletonList(request.getUser().getUserId()));
+            notificationService.sendNotification(notification);
             Log.outputLog(response);
             Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             return response;

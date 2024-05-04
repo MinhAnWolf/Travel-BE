@@ -1,20 +1,20 @@
 package com.vocation.travel.notification.service;
 
 import com.vocation.travel.common.Log;
-import com.vocation.travel.common.constant.CommonConstant;
 import com.vocation.travel.config.ExceptionHandler;
 import com.vocation.travel.config.Message;
-import com.vocation.travel.model.RequestMessage;
-import com.vocation.travel.model.Socket;
-import com.vocation.travel.model.SocketMessage;
+import com.vocation.travel.model.Notification;
+import com.vocation.travel.socket.MemorySocket;
 import com.vocation.travel.socket.SocketHandle;
+import com.vocation.travel.util.Utils;
 import java.util.concurrent.CountDownLatch;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.WebSocketMessage;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
 
 @Service
 public class NotificationService extends Message {
@@ -37,20 +37,26 @@ public class NotificationService extends Message {
 
   private final CountDownLatch latch = new CountDownLatch(1);
 
+  /**
+   * Send message to msmq.
+   *
+   * @param jsonMessage String
+   * */
   @RabbitListener(queues = "${rabbitmq.queue.name}")
-  public void receiveNotification(String message, RequestMessage requestMessage) {
+  public void receiveNotification(String jsonMessage) {
     final String METHOD_NAME = "receiveNotification";
     Log.startLog(SERVICE_NAME, METHOD_NAME);
-    Log.inputLog(message);
-    Log.inputLog(requestMessage);
+    Log.inputLog(jsonMessage);
+    //Call deserialized
+    Notification notification = Utils.deserializedJson(jsonMessage, Notification.class);
     try {
-      for (String idSession: requestMessage.getClientReceives()) {
-        System.out.println("Received <" + message + ">");
-        requestMessage.setMessage(message);
-        WebSocketMessage<?> socketMessage = new SocketMessage();
-        Socket session = new Socket(idSession);
-        socketHandle.handleMessage(session, socketMessage);
+      for (String idUserReceive: notification.getReceiveUserId()) {
+        WebSocketSession socketSession = MemorySocket.infoSocketUser.get(idUserReceive);
+        System.out.println("Received <" + jsonMessage + ">");
+        notification.setMessage(jsonMessage);
+        socketHandle.handleTextMessage(socketSession, new TextMessage(notification.getMessage()));
       }
+      Log.debugLog(notification);
       Log.endLog(SERVICE_NAME, METHOD_NAME);
     } catch (Exception e) {
       Log.errorLog(e.getMessage());
@@ -61,7 +67,16 @@ public class NotificationService extends Message {
     latch.countDown();
   }
 
-  public void sendNotification(String requestMessage) {
-    rabbitTemplate.convertAndSend(exChange, routing, requestMessage);
+  /**
+   * Send message to msmq.
+   *
+   * @param notification Notification
+   * */
+  public void sendNotification(Notification notification) {
+    final String METHOD_NAME = "sendNotification";
+    Log.startLog(SERVICE_NAME, METHOD_NAME);
+    Log.inputLog(notification);
+    rabbitTemplate.convertAndSend(exChange, routing, Utils.deserializedObj(notification));
+    Log.endLog(SERVICE_NAME, METHOD_NAME);
   }
 }

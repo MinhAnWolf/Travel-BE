@@ -32,6 +32,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	testImplementation 'org.springframework.amqp:spring-rabbit-test'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
 }
 
 tasks.named('bootBuildImage') {
