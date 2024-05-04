@@ -2,6 +2,8 @@ package com.vocation.travel.util;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vocation.travel.model.AuthUser;
 import jakarta.servlet.http.Cookie;
 import org.springframework.security.core.Authentication;
@@ -43,5 +45,36 @@ public class Utils {
   public static String userSystem() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     return authentication.getName();
+  }
+
+  /**
+   * Deserialize JSON to object.
+   *
+   * @param json String
+   * @param type Class<E>
+   * @return <E> E
+   * */
+  public static <E> E deserializedJson(String json, Class<E> type) {
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      return objectMapper.readValue(json, type);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Deserialize object to json.
+   *
+   * @param object String
+   * @return String
+   * */
+  public static String deserializedObj(Object object) {
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      return objectMapper.writeValueAsString(object);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
