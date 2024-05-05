@@ -1,5 +1,6 @@
 package com.vocation.travel.entity;
 
+import com.vocation.travel.common.constant.CommonConstant;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Date;
 import java.util.List;
+
+import static com.vocation.travel.util.DateTimeUtils.checkStartTimeAfterFinishTime;
 
 @Getter
 @Setter
@@ -28,6 +31,9 @@ public class Trip extends HelperBy {
     @Column(name = "ADDRESS")
     private String address;
 
+    @Column(name = "STATUS")
+    private String status;
+
     @Column(name = "START_DATE")
     private Date startDate;
 
@@ -48,4 +54,19 @@ public class Trip extends HelperBy {
 
     @OneToMany(mappedBy = "trip")
     private List<Image> images;
+
+    @PrePersist
+    @PreUpdate
+    private void updateStatus() {
+        Date currentDate = new Date();
+        if (currentDate.before(startDate)) {
+            status = CommonConstant.StatusTrip.TODO;
+        } else if (currentDate.after(startDate) && currentDate.before(endDate)) {
+            status = CommonConstant.StatusTrip.PROCESS;
+        } else if (currentDate.after(endDate)) {
+            status = CommonConstant.StatusTrip.FINISH;
+        } else {
+            status = CommonConstant.StatusTrip.DELAY;
+        }
+    }
 }

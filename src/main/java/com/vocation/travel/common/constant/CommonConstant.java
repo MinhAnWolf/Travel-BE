@@ -28,4 +28,12 @@ public class CommonConstant {
         public static final String NOTI_FRIEND = "NOTI-FRIEND";
         public static final String NOTI_SYSTEM = "NOTI-SYSTEM";
     }
+
+    public static class StatusTrip {
+        public static final String TODO = "todo";
+        public static final String PROCESS = "process";
+        public static final String DELAY = "delay";
+        public static final String FINISH = "finish";
+    }
+
 }
