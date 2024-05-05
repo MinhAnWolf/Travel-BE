@@ -3,6 +3,11 @@ package com.vocation.travel.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Regex Pattern.
+ *
+ * @author MQViet
+ * */
 public class RegexPattern {
 
     private static final String PHONE_PATTERN = "^(\\+84|0)\\d{9,10}$";

@@ -1,6 +1,7 @@
 package com.vocation.travel.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -44,6 +45,24 @@ public class User {
   private String role;
 
   private String rememberPassword;
+
+  @Column(name = "FULL_NAME")
+  private String infoName;
+
+  @Column(name = "BIRTHDAY")
+  private Date infoBirthday;
+
+  @Column(name = "GENDER")
+  private boolean infoGender;
+
+  @Column(name = "PHONE")
+  private String infoPhone;
+
+  @Column(name = "AVATAR")
+  private String avatar;
+
+  @Column(name = "PROVINCE_ID")
+  private String provinceId;
 
   @OneToMany(mappedBy = "user")
   private List<Friend> friends;

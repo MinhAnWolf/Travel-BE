@@ -8,6 +8,7 @@ import com.vocation.travel.model.AuthUser;
 import jakarta.servlet.http.Cookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.client.RestTemplate;
 
 /**
  *Utils support.
@@ -76,5 +77,16 @@ public class Utils {
     } catch (JsonProcessingException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  /**
+   * RestTemplate method post.
+   *
+   * @param type Class<E>
+   * @return <E> E
+   * */
+  public <E> E restTemplatePost(String url, Class<E> type, E e) {
+    RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.postForObject(url, e, type);
   }
 }
