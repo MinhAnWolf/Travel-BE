@@ -12,7 +12,7 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FriendDTO {
     private String id;
-    private User user;
     private String myFriend;
     private String status;
+    private UsersDTO usersDto;
 }

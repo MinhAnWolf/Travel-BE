@@ -7,11 +7,12 @@ import com.vocation.travel.entity.Image;
 import com.vocation.travel.model.BaseResponse;
 import com.vocation.travel.repository.ImageRepository;
 import com.vocation.travel.service.CRUD;
+import com.vocation.travel.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ImageServiceImpl extends Message implements CRUD<ImageDTO, BaseResponse> {
+public class ImageServiceImpl extends Message implements CRUD<ImageDTO, BaseResponse>, ImageService {
     @Autowired
     private ImageRepository imageRepository;
 
@@ -36,10 +37,17 @@ public class ImageServiceImpl extends Message implements CRUD<ImageDTO, BaseResp
         return null;
     }
 
+    @Override
+    public BaseResponse uploadImage() {
+        return null;
+    }
+
     private Image convertEntity(ImageDTO request) {
         Image image = new Image();
         image.setLinkImage(request.getLinkImage());
         image.setTrip(request.getTrip());
         return image;
     }
+
+
 }

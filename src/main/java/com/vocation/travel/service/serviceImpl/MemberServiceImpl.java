@@ -5,17 +5,19 @@ import com.vocation.travel.common.constant.CommonConstant;
 import com.vocation.travel.config.ExceptionHandler.BadRequestException;
 import com.vocation.travel.config.ExceptionHandler.SystemErrorException;
 import com.vocation.travel.config.Message;
-import com.vocation.travel.dto.InformationDTO;
 import com.vocation.travel.dto.MemberDTO;
+import com.vocation.travel.dto.UsersDTO;
 import com.vocation.travel.entity.Member;
+import com.vocation.travel.entity.User;
 import com.vocation.travel.model.BaseResponse;
-import com.vocation.travel.repository.InformationRepository;
 import com.vocation.travel.repository.MemberRepository;
 import com.vocation.travel.repository.TripRepository;
+import com.vocation.travel.repository.UserRepository;
 import com.vocation.travel.service.CRUD;
 import com.vocation.travel.service.MemberService;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +31,7 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
   private TripRepository tripRepository;
 
   @Autowired
-  private InformationRepository infoRepository;
+  private UserRepository userRepository;
 
   private final String SERVICE_NAME = "MemberService";
 
@@ -99,8 +101,15 @@ public class MemberServiceImpl extends Message implements MemberService, CRUD<Me
 
     //set information user
     for (MemberDTO memberDto: list) {
-      InformationDTO infoDto = infoRepository.getInformationByUserId(memberDto.getIdUser());
-      memberDto.setInformationDTO(infoDto);
+      Optional<User> getUser = userRepository.findById(memberDto.getIdUser());
+      if (getUser.isPresent()) {
+        User user = getUser.get();
+        UsersDTO usersDto = new UsersDTO();
+        usersDto.setId(user.getUserId());
+        usersDto.setAvatar(user.getAvatar());
+        usersDto.setFullName(user.getInfoName());
+        memberDto.setUsersDTO(usersDto);
+      }
     }
     Log.outputLog(list);
     Log.endLog(SERVICE_NAME, METHOD_NAME);
