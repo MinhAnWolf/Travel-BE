@@ -76,6 +76,8 @@ public class AuthenticationService {
             return new Response("Register fail", null, null, null);
         }
         User user = new User();
+        user.setInfoName(usersDto.getFullName());
+        user.setAvatar(usersDto.getAvatar());
         user.setUsername(usersDto.getUsername());
         user.setEmail(usersDto.getEmail());
         user.setPassword(passwordEncoder.encode(usersDto.getPassword()));
@@ -85,7 +87,6 @@ public class AuthenticationService {
         Log.endLog(SERVICE_NAME, METHOD);
         return response;
     }
-
     /**
      * check exist email and username.
      *

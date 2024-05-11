@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ImageDTO {
+public class    ImageDTO {
     private String id;
     private String linkImage;
     private Trip trip;

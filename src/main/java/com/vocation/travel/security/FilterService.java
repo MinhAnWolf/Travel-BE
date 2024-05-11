@@ -41,7 +41,7 @@ public class FilterService extends OncePerRequestFilter {
         boolean urlPassFilter = urlPassFilter(request.getRequestURI());
 
         if (!urlPassFilter) {
-            if (Utils.isEmpty(tokenAuthorization) && Utils.isEmpty(tokenRf) && !checkLoginUrl) {
+            if (Utils.isEmpty(tokenAuthorization) && Utils.isEmpty(tokenRf) && !checkLoginUrl && !checkRegisterUrl) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }

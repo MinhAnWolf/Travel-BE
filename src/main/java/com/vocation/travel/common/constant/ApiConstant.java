@@ -20,6 +20,9 @@ public class ApiConstant {
     public final static String API_REGISTER = "/register";
     public final static String API_AUTHENTICATION = "/authentication";
 
+    //------------------------------------------- API USER -------------------------------------------------------------
+    public final static String API_USER = "/user";
+
     //------------------------------------------- API ADDRESS ----------------------------------------------------------
     public final static String API_ADDRESS = "/address";
     public final static String API_DISTRICT = "/district";

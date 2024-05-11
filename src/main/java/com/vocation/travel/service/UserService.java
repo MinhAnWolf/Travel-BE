@@ -15,5 +15,7 @@ public interface UserService {
 
   User getUserByUserName();
 
+//  User update(User user);
+
   String getIdUserByUserName() throws BadRequestException;
 }
