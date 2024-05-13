@@ -17,10 +17,9 @@ public class Image {
     @Column(name = "ID")
     private String id;
 
-    @Column(name = "LINK_IMAGE")
-    private String linkImage;
+    @Column(name = "LINK")
+    private String link;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_TRIP")
-    private Trip trip;
+    @Column(name = "TRIP_ID")
+    private String tripId;
 }

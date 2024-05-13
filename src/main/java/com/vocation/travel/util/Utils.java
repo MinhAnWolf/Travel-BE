@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 public class Utils {
 
   /**
-   * Check is empty.
+   * Check is empty type string.
    *
    * @param value String
    * @return boolean
@@ -27,6 +27,12 @@ public class Utils {
     return value == null || value.isEmpty();
   }
 
+  /**
+   * Check null type object.
+   *
+   * @param obj Object
+   * @return boolean
+   * */
   public static boolean objNull(Object obj) {
     return Objects.isNull(obj);
   }
@@ -77,16 +83,5 @@ public class Utils {
     } catch (JsonProcessingException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  /**
-   * RestTemplate method post.
-   *
-   * @param type Class<E>
-   * @return <E> E
-   * */
-  public <E> E restTemplatePost(String url, Class<E> type, E e) {
-    RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.postForObject(url, e, type);
   }
 }

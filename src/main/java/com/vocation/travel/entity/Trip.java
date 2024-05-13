@@ -52,9 +52,6 @@ public class Trip extends HelperBy {
     @OneToMany(mappedBy = "trip")
     private List<Member> members;
 
-    @OneToMany(mappedBy = "trip")
-    private List<Image> images;
-
     @PrePersist
     @PreUpdate
     private void updateStatus() {

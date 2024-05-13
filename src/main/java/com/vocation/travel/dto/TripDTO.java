@@ -19,10 +19,9 @@ public class TripDTO extends HelperBy {
     private String title;
     private String description;
     private String address;
-    private String image;
     private Date startDate;
     private Date endDate;
     private String owner;
     private List<Member> members;
-    private List<ImageDTO> images;
+    private List<String> linkImages;
 }
