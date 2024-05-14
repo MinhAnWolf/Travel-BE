@@ -106,10 +106,10 @@ public class UserServiceImpl extends Message implements UserService, CRUD<UsersD
         User user = optionalUser.get();
         BaseResponse response;
         if (request.getUsername() != null) {
-          user.setEmail(request.getUsername());
+          user.setUsername(request.getUsername());
         }
         if (request.getFullName() != null) {
-          user.setEmail(request.getFullName());
+          user.setInfoName(request.getFullName());
         }
         if (request.getEmail() != null) {
           user.setEmail(request.getEmail());
@@ -118,16 +118,16 @@ public class UserServiceImpl extends Message implements UserService, CRUD<UsersD
           user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
         if (request.getPhone() != null) {
-          user.setEmail(request.getPhone());
+          user.setInfoPhone(request.getPhone());
         }
         if (request.getAvatar() != null) {
-          user.setEmail(request.getAvatar());
+          user.setAvatar(request.getAvatar());
         }
         if (request.getBirthday() != null) {
-          user.setEmail(request.getBirthday());
+          user.setInfoBirthday(request.getBirthday());
         }
         if (request.getGender() != null) {
-          user.setEmail(request.getGender());
+          user.setInfoGender(request.getGender());
         }
         userRepository.save(user);
         response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("UpdateSuccess"));
