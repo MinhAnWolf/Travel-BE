@@ -2,9 +2,11 @@ package com.vocation.travel.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.vocation.travel.entity.User;
-import lombok.*;
-
-import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * UserDTO.
@@ -19,13 +21,10 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UsersDTO {
   private String id;
-  private String username;
   private String fullName;
-  private String email;
-  private Date birthday;
-  private Boolean gender;
-  private String phone;
   private String avatar;
+  private String username;
+  private String email;
   private String password;
 
   /**
