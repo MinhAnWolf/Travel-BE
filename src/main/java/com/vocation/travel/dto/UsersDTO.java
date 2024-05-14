@@ -21,10 +21,13 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UsersDTO {
   private String id;
-  private String fullName;
-  private String avatar;
   private String username;
+  private String fullName;
   private String email;
+  private String birthday;
+  private String gender;
+  private String phone;
+  private String avatar;
   private String password;
 
   /**

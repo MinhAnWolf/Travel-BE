@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import com.vocation.travel.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.vocation.travel.common.constant.CommonConstant.RESPONSE_SUCCESS;
@@ -32,6 +33,9 @@ public class UserServiceImpl extends Message implements UserService, CRUD<UsersD
 
   @Autowired
   private UserRepository userRepository;
+
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
   private final static String SERVICE_NAME = "UserService";
 
@@ -62,30 +66,78 @@ public class UserServiceImpl extends Message implements UserService, CRUD<UsersD
     return user.get();
   }
 
+  /**
+   * Create user.
+   *
+   * @param request UserDTO
+   * @return BaseResponse
+   * */
   @Override
   public BaseResponse create(UsersDTO request) {
     return null;
   }
 
+  /**
+   * Read user.
+   *
+   * @param request UserDTO
+   * @return BaseResponse
+   * */
   @Override
   public BaseResponse read(UsersDTO request) {
     return null;
   }
 
-    @Override
+  /**
+   * Update user.
+   *
+   * @param request UserDTO
+   * @return BaseResponse
+   * */
+  @Override
   public BaseResponse update(UsersDTO request) {
     try {
       Log.startLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
       Log.inputLog(request);
-      User user = new User();
-      String id = user.getUserId();
-      getUserById(id);
-      BaseResponse response;
-      userRepository.save(user);
-      response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("UpdateSuccess"));
-      Log.outputLog(response);
-      Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
-      return response;
+      Optional<User> optionalUser = userRepository.findById(request.getId());
+
+      if (optionalUser.isPresent()) {
+//        User user = new User();
+        User user = optionalUser.get();
+        BaseResponse response;
+        if (request.getUsername() != null) {
+          user.setEmail(request.getUsername());
+        }
+        if (request.getFullName() != null) {
+          user.setEmail(request.getFullName());
+        }
+        if (request.getEmail() != null) {
+          user.setEmail(request.getEmail());
+        }
+        if (request.getPassword() != null) {
+          user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        if (request.getPhone() != null) {
+          user.setEmail(request.getPhone());
+        }
+        if (request.getAvatar() != null) {
+          user.setEmail(request.getAvatar());
+        }
+        if (request.getBirthday() != null) {
+          user.setEmail(request.getBirthday());
+        }
+        if (request.getGender() != null) {
+          user.setEmail(request.getGender());
+        }
+        userRepository.save(user);
+        response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("UpdateSuccess"));
+        Log.outputLog(response);
+        Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
+        return response;
+      } else {
+        // Không tìm thấy người dùng với id tương ứng
+        throw new ExceptionHandler.SystemErrorException(getMessage("UserNotFound"));
+      }
     } catch (Exception e) {
       Log.errorLog(e);
       Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
@@ -93,6 +145,12 @@ public class UserServiceImpl extends Message implements UserService, CRUD<UsersD
     }
   }
 
+  /**
+   * Delete user.
+   *
+   * @param request UserDTO
+   * @return BaseResponse
+   * */
   @Override
   public BaseResponse delete(UsersDTO request) {
     return null;
