@@ -169,18 +169,4 @@ public class UserServiceImpl extends Message implements UserService, CRUD<UsersD
     }
     return idUser;
   }
-
-  //////////////////////////////////
-//  private User convertEntity(UsersDTO request, String method) {
-//    User user = new User();
-//    if (method.equals(method)) {
-//      user.setUserId(null);
-//    } else {
-//      if (!checkInputParams(request, method)) {
-//        throw new BadRequestException(getMessage("ParamsNull"));
-//      }
-//    }
-//    setData(user, request);
-//    return user;
-//  }
 }
