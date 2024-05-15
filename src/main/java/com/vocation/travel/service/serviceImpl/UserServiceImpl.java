@@ -15,6 +15,7 @@ import com.vocation.travel.service.CRUD;
 import com.vocation.travel.service.UserService;
 import java.util.Optional;
 
+import com.vocation.travel.util.RegexPattern;
 import com.vocation.travel.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -111,13 +112,19 @@ public class UserServiceImpl extends Message implements UserService, CRUD<UsersD
         if (request.getFullName() != null) {
           user.setInfoName(request.getFullName());
         }
-        if (request.getEmail() != null) {
+//        if (request.getEmail() != null) {
+//          user.setEmail(request.getEmail());
+//        }
+        if (request.getEmail() != null && RegexPattern.regexEmail(request.getEmail())) {
           user.setEmail(request.getEmail());
         }
         if (request.getPassword() != null) {
           user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
-        if (request.getPhone() != null) {
+//        if (request.getPhone() != null) {
+//          user.setInfoPhone(request.getPhone());
+//        }
+        if (request.getPhone() != null && RegexPattern.regexPhone(request.getPhone())) {
           user.setInfoPhone(request.getPhone());
         }
         if (request.getAvatar() != null) {
