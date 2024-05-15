@@ -103,39 +103,35 @@ public class UserServiceImpl extends Message implements UserService, CRUD<UsersD
       Optional<User> optionalUser = userRepository.findById(request.getId());
 
       if (optionalUser.isPresent()) {
-//        User user = new User();
         User user = optionalUser.get();
         BaseResponse response;
-        if (request.getUsername() != null) {
+        if (!Utils.isEmpty(request.getUsername())) {
           user.setUsername(request.getUsername());
         }
-        if (request.getFullName() != null) {
+        if (!Utils.isEmpty(request.getFullName())) {
           user.setInfoName(request.getFullName());
         }
-//        if (request.getEmail() != null) {
-//          user.setEmail(request.getEmail());
-//        }
-        if (request.getEmail() != null && RegexPattern.regexEmail(request.getEmail())) {
+        if (!Utils.isEmpty(request.getEmail()) && RegexPattern.regexEmail(request.getEmail())) {
           user.setEmail(request.getEmail());
         }
-        if (request.getPassword() != null) {
+        if (!Utils.isEmpty(request.getPassword())) {
           user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
-//        if (request.getPhone() != null) {
-//          user.setInfoPhone(request.getPhone());
-//        }
-        if (request.getPhone() != null && RegexPattern.regexPhone(request.getPhone())) {
+        if (!Utils.isEmpty(request.getPhone()) && RegexPattern.regexPhone(request.getPhone())) {
           user.setInfoPhone(request.getPhone());
         }
-        if (request.getAvatar() != null) {
+        if (!Utils.objNull(request.getAvatar())) {
           user.setAvatar(request.getAvatar());
         }
-        if (request.getBirthday() != null) {
+
+        if (!Utils.dateNull(request.getBirthday())) {
           user.setInfoBirthday(request.getBirthday());
         }
-        if (request.getGender() != null) {
+
+        if (!Utils.booleanNull(request.getGender())) {
           user.setInfoGender(request.getGender());
         }
+
         userRepository.save(user);
         response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("UpdateSuccess"));
         Log.outputLog(response);
