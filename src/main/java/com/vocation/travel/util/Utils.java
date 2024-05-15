@@ -1,5 +1,6 @@
 package com.vocation.travel.util;
 
+import java.util.Date;
 import java.util.Objects;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,6 +37,27 @@ public class Utils {
   public static boolean objNull(Object obj) {
     return Objects.isNull(obj);
   }
+
+  /**
+   * Check null type date.
+   *
+   * @param date Date
+   * @return boolean
+   */
+  public static boolean dateNull(Date date) {
+    return objNull(date);
+  }
+
+  /**
+   * Check null type Boolean
+   *
+   * @param gender Boolean
+   * @return boolean
+   */
+  public static boolean booleanNull(Boolean gender) {
+    return objNull(gender);
+  }
+
 
   public static String getCookieOnly(String key, Cookie[] listCookie) {
     String result = null;

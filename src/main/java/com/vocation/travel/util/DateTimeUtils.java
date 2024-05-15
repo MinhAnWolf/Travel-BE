@@ -17,6 +17,11 @@ public class DateTimeUtils {
     return timeFinish.before(timeStart);
   }
 
+  /////////////////////////////////////////
+//  public static boolean checkCurrentTime(Date timeStart, Date currentTime){
+//    return ;
+//  }
+
   public static boolean checkBetweenTime(LocalDateTime timeStart, LocalDateTime timeFinish) {
     LocalDateTime now = LocalDateTime.now();
     return timeStart.isAfter(now) && timeFinish.isBefore(now);

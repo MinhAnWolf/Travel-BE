@@ -20,6 +20,9 @@ public class ApiConstant {
     public final static String API_REGISTER = "/register";
     public final static String API_AUTHENTICATION = "/authentication";
 
+    //------------------------------------------- API USER -------------------------------------------------------------
+    public final static String API_USER = "/user";
+
     //------------------------------------------- API ADDRESS ----------------------------------------------------------
     public final static String API_ADDRESS = "/address";
     public final static String API_DISTRICT = "/district";
@@ -35,7 +38,7 @@ public class ApiConstant {
     //------------------------------------------- API MEMBER -----------------------------------------------------------
     public final static String API_MEMBER = "/member";
 
-    //------------------------------------------- API MEMBER -----------------------------------------------------------
+    //------------------------------------------- API FRIEND -----------------------------------------------------------
     public final static String API_FRIEND = "/friend";
 
     //------------------------------------------- API NOTIFICATION -----------------------------------------------------
@@ -45,5 +48,4 @@ public class ApiConstant {
     //------------------------------------------- API IMAGE ------------------------------------------------------------
     public final static String API_IMAGE = "/image";
     public final static String API_UPLOAD_IMAGE = "/upload";
-
 }
