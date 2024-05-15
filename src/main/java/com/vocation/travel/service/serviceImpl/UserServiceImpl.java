@@ -105,32 +105,8 @@ public class UserServiceImpl extends Message implements UserService, CRUD<UsersD
       if (optionalUser.isPresent()) {
         User user = optionalUser.get();
         BaseResponse response;
-        if (!Utils.isEmpty(request.getUsername())) {
-          user.setUsername(request.getUsername());
-        }
-        if (!Utils.isEmpty(request.getFullName())) {
-          user.setInfoName(request.getFullName());
-        }
-        if (!Utils.isEmpty(request.getEmail()) && RegexPattern.regexEmail(request.getEmail())) {
-          user.setEmail(request.getEmail());
-        }
-        if (!Utils.isEmpty(request.getPassword())) {
-          user.setPassword(passwordEncoder.encode(request.getPassword()));
-        }
-        if (!Utils.isEmpty(request.getPhone()) && RegexPattern.regexPhone(request.getPhone())) {
-          user.setInfoPhone(request.getPhone());
-        }
-        if (!Utils.objNull(request.getAvatar())) {
-          user.setAvatar(request.getAvatar());
-        }
 
-        if (!Utils.dateNull(request.getBirthday())) {
-          user.setInfoBirthday(request.getBirthday());
-        }
-
-        if (!Utils.booleanNull(request.getGender())) {
-          user.setInfoGender(request.getGender());
-        }
+        checkInputParams(request, user);
 
         userRepository.save(user);
         response = new BaseResponse(RESPONSE_SUCCESS, Boolean.TRUE, getMessage("UpdateSuccess"));
@@ -138,7 +114,7 @@ public class UserServiceImpl extends Message implements UserService, CRUD<UsersD
         Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
         return response;
       } else {
-        throw new ExceptionHandler.SystemErrorException(getMessage("UserNotFound"));
+        throw new ExceptionHandler.BadRequestException(getMessage("BadRequest"));
       }
     } catch (Exception e) {
       Log.errorLog(e);
@@ -170,5 +146,55 @@ public class UserServiceImpl extends Message implements UserService, CRUD<UsersD
       throw new BadRequestException(getMessage("UserNotExist"));
     }
     return idUser;
+  }
+
+  private void checkInputParams(UsersDTO request, User user) {
+    if (Utils.isEmpty(request.getUsername())) {
+      throw new ExceptionHandler.BadRequestException(getMessage("InvalidUsername"));
+    } else {
+      user.setUsername(request.getUsername());
+    }
+
+    if (Utils.isEmpty(request.getFullName())) {
+      throw new ExceptionHandler.BadRequestException(getMessage("InvalidFullName"));
+    } else {
+      user.setInfoName(request.getFullName());
+    }
+
+    if (Utils.isEmpty(request.getEmail()) || !RegexPattern.regexEmail(request.getEmail())) {
+      throw new ExceptionHandler.BadRequestException(getMessage("InvalidEmail"));
+    } else {
+      user.setEmail(request.getEmail());
+    }
+
+    if (Utils.isEmpty(request.getPassword())) {
+      throw new ExceptionHandler.BadRequestException(getMessage("InvalidPassword"));
+    } else {
+      user.setPassword(passwordEncoder.encode(request.getPassword()));
+    }
+
+    if (Utils.isEmpty(request.getPhone()) || !RegexPattern.regexPhone(request.getPhone())) {
+      throw new ExceptionHandler.BadRequestException(getMessage("InvalidPhone"));
+    } else {
+      user.setInfoPhone(request.getPhone());
+    }
+
+    if (Utils.objNull(request.getAvatar())) {
+      throw new ExceptionHandler.BadRequestException(getMessage("InvalidAvatar"));
+    } else {
+      user.setAvatar(request.getAvatar());
+    }
+
+    if (Utils.dateNull(request.getBirthday())) {
+      throw new ExceptionHandler.BadRequestException(getMessage("InvalidBirthday"));
+    } else {
+      user.setInfoBirthday(request.getBirthday());
+    }
+
+    if (Utils.booleanNull(request.getGender())) {
+      throw new ExceptionHandler.BadRequestException(getMessage("InvalidGender"));
+    } else {
+      user.setInfoGender(request.getGender());
+    }
   }
 }
