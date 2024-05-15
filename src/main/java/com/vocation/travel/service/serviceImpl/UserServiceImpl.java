@@ -135,7 +135,6 @@ public class UserServiceImpl extends Message implements UserService, CRUD<UsersD
         Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
         return response;
       } else {
-        // Không tìm thấy người dùng với id tương ứng
         throw new ExceptionHandler.SystemErrorException(getMessage("UserNotFound"));
       }
     } catch (Exception e) {

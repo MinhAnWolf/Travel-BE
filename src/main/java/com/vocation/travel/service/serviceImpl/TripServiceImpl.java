@@ -4,14 +4,12 @@ import com.vocation.travel.common.Log;
 import com.vocation.travel.common.constant.CommonConstant;
 import com.vocation.travel.config.ExceptionHandler.*;
 import com.vocation.travel.config.Message;
-import com.vocation.travel.dto.ImageDTO;
 import com.vocation.travel.dto.MemberDTO;
 import com.vocation.travel.dto.TripDTO;
 import com.vocation.travel.entity.Image;
 import com.vocation.travel.entity.Member;
 import com.vocation.travel.entity.Trip;
 import com.vocation.travel.model.BaseResponse;
-import com.vocation.travel.repository.ImageRepository;
 import com.vocation.travel.repository.TripRepository;
 import com.vocation.travel.service.CRUD;
 import com.vocation.travel.service.MemberService;
@@ -21,7 +19,6 @@ import com.vocation.travel.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Date;
-import java.util.List;
 
 import static com.vocation.travel.common.constant.CommonConstant.RESPONSE_SUCCESS;
 
@@ -42,7 +39,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
     private CRUD<MemberDTO, BaseResponse> memberService;
 
     @Autowired
-    private CRUD<ImageDTO, BaseResponse> imageService;
+    private ImageServiceImpl imageService;
 
     @Autowired
     private MemberService memberServices;
@@ -61,6 +58,8 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
         try {
             Log.startLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
             Log.inputLog(request);
+
+            //validate trip
             checkInputParams(request, CommonConstant.METHOD_CREATE);
             validateTime(request.getStartDate(), request.getEndDate(), request, CommonConstant.METHOD_CREATE);
 
@@ -71,7 +70,7 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             tripRepository.save(trip);
 
             // register image
-            if (!Utils.objNull(request.getImages())) {
+            if (!Utils.objNull(request.getLinkImages())) {
                 saveImage(request, trip);
             }
 
@@ -261,11 +260,19 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
         }
     }
 
+    /**
+     * Call service save image.
+     *
+     * @param request TripDTO
+     * @param trip Trip
+     * */
     private void saveImage(TripDTO request, Trip trip) {
         try {
-            for (ImageDTO imageDto: request.getImages()) {
-                imageDto.setTrip(trip);
-                imageService.create(imageDto);
+            for (String linkImage: request.getLinkImages()) {
+                Image image = new Image();
+                image.setTripId(trip.getId());
+                image.setLink(linkImage);
+                imageService.create(image);
             }
         } catch (Exception e) {
             Log.errorLog(e);

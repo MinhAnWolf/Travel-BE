@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
-public class RequestImage {
+public class UploadImage {
   private String data;
   private final String type = "image/png";
   private String name;
