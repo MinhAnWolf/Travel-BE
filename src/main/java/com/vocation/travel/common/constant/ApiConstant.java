@@ -38,10 +38,14 @@ public class ApiConstant {
     //------------------------------------------- API MEMBER -----------------------------------------------------------
     public final static String API_MEMBER = "/member";
 
-    //------------------------------------------- API MEMBER -----------------------------------------------------------
+    //------------------------------------------- API FRIEND -----------------------------------------------------------
     public final static String API_FRIEND = "/friend";
 
     //------------------------------------------- API NOTIFICATION -----------------------------------------------------
     public final static String API_NOTIFICATION = "/notification";
     public final static String API_NOTIFICATION_FRIEND = API_NOTIFICATION + API_FRIEND + API_ADD;
+
+    //------------------------------------------- API IMAGE ------------------------------------------------------------
+    public final static String API_IMAGE = "/image";
+    public final static String API_UPLOAD_IMAGE = "/upload";
 }
