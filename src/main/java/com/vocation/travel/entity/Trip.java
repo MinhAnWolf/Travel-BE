@@ -9,8 +9,6 @@ import lombok.Setter;
 import java.util.Date;
 import java.util.List;
 
-import static com.vocation.travel.util.DateTimeUtils.checkStartTimeAfterFinishTime;
-
 @Getter
 @Setter
 @NoArgsConstructor

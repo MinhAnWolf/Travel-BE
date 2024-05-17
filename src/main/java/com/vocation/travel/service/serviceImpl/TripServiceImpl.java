@@ -228,6 +228,8 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
      * @param method String
      * */
     private void validateTime(Date startDate, Date endDate, TripDTO request, String method) {
+        Date currentDate = new Date();
+
         if (DateTimeUtils.checkStartTimeAfterFinishTime(startDate, endDate)) {
             Log.outputLog(request);
             Log.endLog(SERVICE_NAME, method);
@@ -238,6 +240,12 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             Log.outputLog(request);
             Log.endLog(SERVICE_NAME, method);
             throw new BadRequestException(getMessage("DateEndFail", new Object[] {startDate, endDate}));
+        }
+
+        if (startDate.before(currentDate)) {
+            Log.outputLog(request);
+            Log.endLog(SERVICE_NAME, method);
+            throw new BadRequestException(getMessage("DateCurrentFail", new Object[]{currentDate, startDate}));
         }
     }
 
@@ -279,6 +287,5 @@ public class TripServiceImpl extends Message implements CRUD<TripDTO, BaseRespon
             Log.endLog(SERVICE_NAME, "saveImage");
             throw new SystemErrorException(getMessage("SaveImage"));
         }
-
     }
 }

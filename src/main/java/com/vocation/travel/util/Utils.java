@@ -58,7 +58,6 @@ public class Utils {
     return objNull(gender);
   }
 
-
   public static String getCookieOnly(String key, Cookie[] listCookie) {
     String result = null;
     if (!objNull(listCookie)) {
