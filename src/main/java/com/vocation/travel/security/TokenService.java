@@ -47,6 +47,9 @@ public class TokenService {
     @Autowired
     private UserService userService;
 
+    private final String BEARER = "Bearer";
+    private final String BEARER_SPACE = "Bearer ";
+
     /**
      * Generate token.
      *
@@ -61,13 +64,13 @@ public class TokenService {
                 .collect(Collectors.joining(" "));
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("Bearer")
+                .issuer(BEARER)
                 .expiresAt(now.plus(TimeExpires, ChronoUnit.MINUTES))
                 .subject(authentication.getName())
                 .claim("scope", scope)
                 .claim("id", idUser)
                 .build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        return BEARER_SPACE + jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
     /**
@@ -84,7 +87,7 @@ public class TokenService {
                 .collect(Collectors.joining(" "));
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("Bearer")
+                .issuer(BEARER)
                 .expiresAt(now.plus(TimeExpires, ChronoUnit.MINUTES))
                 .subject(username)
                 .claim("scope", scope)
@@ -172,7 +175,7 @@ public class TokenService {
         if (Utils.isEmpty(token)) {
             return null;
         }
-        return token.replace("Bearer ", "");
+        return token.replace(BEARER_SPACE, "");
     }
 
     private Collection<GrantedAuthority> convertScope(List<String> scopes) {
