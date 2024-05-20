@@ -6,7 +6,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -34,24 +33,27 @@ public class FilterService extends OncePerRequestFilter {
         String tokenAuthorization = request.getHeader(AUTHORIZATION);
         String tokenRf = request.getHeader(REFRESH);
         String uid = request.getHeader(UID);
-        String uriLogin = "/api/v1/travel/auth/login";
-        String uriRegister = "/api/v1/travel/auth/register";
+        final String uriLogin = "/api/v1/travel/auth/login";
+        final String uriRegister = "/api/v1/travel/auth/register";
         boolean checkLoginUrl = request.getRequestURI().equals(uriLogin);
         boolean checkRegisterUrl = request.getRequestURI().equals(uriRegister);
         boolean urlPassFilter = urlPassFilter(request.getRequestURI());
 
+        // Check diff url register and login require jwt
         if (!urlPassFilter) {
-            if (Utils.isEmpty(tokenAuthorization) && Utils.isEmpty(tokenRf) && !checkLoginUrl && !checkRegisterUrl) {
+            if (checkJwt(tokenAuthorization, tokenRf)  && !checkLoginUrl && !checkRegisterUrl) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
         }
 
+        // Pass url
         if (checkLoginUrl || checkRegisterUrl || urlPassFilter) {
             filterChain.doFilter(request, response);
             return;
         }
 
+        // Refresh token
         Map<String, String> listToken =  tokenService.refeshToken(tokenRf, tokenAuthorization, uid);
         if (!Utils.objNull(listToken) && !listToken.isEmpty()) {
             addHeader(listToken, uid, response);
@@ -86,5 +88,16 @@ public class FilterService extends OncePerRequestFilter {
     private boolean urlPassFilter(String requestUrl) {
         return requestUrl.contains("swagger") || requestUrl.contains("api-docs")
                 || requestUrl.contains("address");
+    }
+
+    /**
+     * Check jwt.
+     *
+     * @param auth String
+     * @param rf   String
+     * @return boolean
+     * */
+    private boolean checkJwt(String auth, String rf) {
+        return Utils.isEmpty(auth) || Utils.isEmpty(rf) || !auth.startsWith("Bearer ") || !rf.startsWith("Bearer ");
     }
 }
