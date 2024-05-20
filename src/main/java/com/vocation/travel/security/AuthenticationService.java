@@ -76,13 +76,13 @@ public class AuthenticationService {
             return new Response("Register fail", null, null, null);
         }
         User user = new User();
-        user.setInfoName(usersDto.getFullName());
+//        user.setInfoName(usersDto.getFullName());
         user.setUsername(usersDto.getUsername());
         user.setEmail(usersDto.getEmail());
-        user.setInfoBirthday(usersDto.getBirthday());
-        user.setInfoGender(usersDto.getGender());
-        user.setInfoPhone(usersDto.getPhone());
-        user.setAvatar(usersDto.getAvatar());
+//        user.setInfoBirthday(usersDto.getBirthday());
+//        user.setInfoGender(usersDto.getGender());
+//        user.setInfoPhone(usersDto.getPhone());
+//        user.setAvatar(usersDto.getAvatar());
         user.setPassword(passwordEncoder.encode(usersDto.getPassword()));
         userRepository.save(user);
         Response response = new Response("Register success", null, null, null);
