@@ -1,14 +1,16 @@
 package com.vocation.travel.security;
 
+import com.vocation.travel.repository.UserRepository;
 import com.vocation.travel.util.Utils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
+import org.springframework.security.core.userdetails.UserDetails;
 import java.io.IOException;
 import java.util.Map;
 
@@ -19,6 +21,12 @@ public class FilterService extends OncePerRequestFilter {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private JpaUserDetailsService userDetailsService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * Do filter internal.
@@ -57,6 +65,17 @@ public class FilterService extends OncePerRequestFilter {
         Map<String, String> listToken =  tokenService.refeshToken(tokenRf, tokenAuthorization, uid);
         if (!Utils.objNull(listToken) && !listToken.isEmpty()) {
             addHeader(listToken, uid, response);
+        }
+
+        if(Utils.isEmpty(UID) && SecurityContextHolder.getContext().getAuthentication() == null){
+            String username = userRepository.getUsernameById(UID);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if(jwtService.validateToken(token, userDetails)){
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            }
+
         }
 
         filterChain.doFilter(request, response);
