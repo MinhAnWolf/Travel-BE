@@ -53,8 +53,8 @@ public class SecurityConfig {
     @Autowired
     private AuthenticationFailureHandler authenticationFailureHandler;
 
-//    @Autowired
-//    private FilterService filterService;
+    @Autowired
+    private FilterService filterService;
 
     /**
      * Set value provider manager security.
@@ -110,7 +110,7 @@ public class SecurityConfig {
                 .userDetailsService(userDetailsService)
                 .httpBasic(Customizer.withDefaults())
                 .exceptionHandling(e -> e.authenticationEntryPoint(authenticationFailureHandler))
-//                .addFilterBefore(filterService, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(filterService, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider())
                 .build();
     }

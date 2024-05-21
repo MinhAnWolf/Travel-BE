@@ -10,6 +10,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
@@ -108,13 +109,29 @@ public class TokenService {
     }
 
     /**
+     * Get username from jwt
+     *
+     * @return String
+     * */
+    private String extractUsername(String token) {
+        return deJwt(token).getSubject();
+    }
+
+
+
+    /**
      * Validate time token.
      *
      * @param token String
      * @return boolean
      * */
-    public boolean validateTimeToken(String token) {
-        return deJwt(token).getExpiresAt().isBefore(Instant.now());
+    public boolean validateToken(String token, UserDetails userDetails) {
+        boolean checkExpiredJwt = deJwt(token).getExpiresAt().isBefore(Instant.now());
+        String username = extractUsername(token);
+        if (checkExpiredJwt && userDetails.getUsername().equals(username)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -123,7 +140,7 @@ public class TokenService {
      * @param token String
      * @return boolean
      * */
-    public Map<String, String> refeshToken(String refeshToken, String atToken, String userId) {
+    public Map<String, String> refeshToken(String refeshToken, String atToken, String userId, UserDetails userDetails) {
         Map<String, String> listToken = new HashMap<>();
         String sub = "sub";
         String id = "id";
@@ -132,7 +149,7 @@ public class TokenService {
         atToken = naturalVersionToken(atToken);
         // check refesh token
         try {
-            if (validateTimeToken(refeshToken)) {
+            if (validateToken(refeshToken, userDetails)) {
                 Jwt jwt = deJwt(refeshToken);
                 Collection<GrantedAuthority> roles = convertScope((List<String>) jwt.getClaims().get(scope));
                 listToken.put("rf", refreshTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
@@ -148,7 +165,7 @@ public class TokenService {
 
         // check access token
         try {
-            if (validateTimeToken(atToken)) {
+            if (validateToken(atToken, userDetails)) {
                 Jwt jwt = deJwt(atToken);
                 Collection<GrantedAuthority> roles = convertScope((List<String>) jwt.getClaims().get(scope));
                 listToken.put("Authorization", refreshTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
