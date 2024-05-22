@@ -55,8 +55,8 @@ public class AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         AuthUser userDetails = (AuthUser) authentication.getPrincipal();
         String idU = userDetails.getUser().getUserId();
-        String atToken = tokenService.generateToken(authentication, idU, TimeConstant.minuteAt);
-        String rfToken = tokenService.generateToken(authentication, idU, TimeConstant.minuteRf);
+        String atToken = tokenService.generateToken(userDetails.getUsername());
+        String rfToken = tokenService.generateToken(userDetails.getUsername());
         Response response = new Response("User logged in successfully", atToken, rfToken, idU);
         Log.debugLog("Response: ", response);
         Log.endLog(SERVICE_NAME, METHOD);

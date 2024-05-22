@@ -1,5 +1,6 @@
 package com.vocation.travel.security;
 
+import com.vocation.travel.entity.Token;
 import com.vocation.travel.repository.UserRepository;
 import com.vocation.travel.util.Utils;
 import jakarta.servlet.FilterChain;
@@ -14,6 +15,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -63,15 +68,30 @@ public class FilterService extends OncePerRequestFilter {
             return;
         }
 
+        // Check token
         if(Utils.isEmpty(UID) && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = getUserDetailsByUid(UID);
-            setSecurityContextHolder(userDetails, request);
-            if(!tokenService.validateToken(tokenAuthorization, userDetails)){
-                Map<String, String> listToken =  tokenService.refeshToken(tokenRf, tokenAuthorization, uid, userDetails);
-                if (!Utils.objNull(listToken) && !listToken.isEmpty()) {
-                    addHeader(listToken, uid, response);
+            List<Token> listToken = new ArrayList<>();
+            Token token = new Token();
+            token.setAccess(tokenAuthorization);
+            token.setRefresh(tokenRf);
+            listToken.add(token);
+            Map<String, String> tokenRefresh = new HashMap<>();
+            // Check token, if token expired then re-generate token and add header response
+            for (Token itemToken: listToken) {
+                // Check access token occur then check refresh token
+                if(tokenService.validateToken(itemToken.getAccess(), userDetails)){
+                    if(tokenService.validateToken(itemToken.getAccess(), userDetails)){
+
+                    }
+                    // if access token
+                    String responseRf =  tokenService.generateToken();
+                    if (Utils.isEmpty(responseRf)) {
+                        addHeader(listToken, uid, response);
+                    }
                 }
             }
+            setSecurityContextHolder(userDetails, request);
         }
 
         filterChain.doFilter(request, response);

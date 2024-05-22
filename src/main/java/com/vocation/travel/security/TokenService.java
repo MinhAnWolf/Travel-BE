@@ -8,21 +8,28 @@ import com.vocation.travel.service.UserService;
 import com.vocation.travel.util.Utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
+import java.security.Key;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 
 /**
  * Logic authentication and authorization.
@@ -33,9 +40,6 @@ import java.util.stream.Collectors;
 @Log4j2
 @Service
 public class TokenService {
-    @Autowired
-    private JwtEncoder jwtEncoder;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -50,62 +54,53 @@ public class TokenService {
 
     private final String BEARER = "Bearer";
     private final String BEARER_SPACE = "Bearer ";
+    public static final String SECRET = "357638792F423F4428472B4B6250655368566D597133743677397A2443264629";
 
     /**
      * Generate token.
      *
-     * @param authentication Authentication
+     * @param username String
      * @return String
      * */
-    public String generateToken(Authentication authentication, String idUser, int TimeExpires) {
-        Instant now = Instant.now();
-
-        String scope = authentication.getAuthorities()
-                .stream().map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
-
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer(BEARER)
-                .expiresAt(now.plus(TimeExpires, ChronoUnit.MINUTES))
-                .subject(authentication.getName())
-                .claim("scope", scope)
-                .claim("id", idUser)
-                .build();
-        return BEARER_SPACE + jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    public String generateToken(String username){
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, username);
     }
 
-    /**
-     * Generate token expires.
-     *
-     * @param authentication Authentication
-     * @return String
-     * */
-    public String refreshTokenExpires(Collection<? extends GrantedAuthority> roles,
-                                       String idUser, String username, int TimeExpires) {
-        Instant now = Instant.now();
-
-        String scope = roles.stream().map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
-
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer(BEARER)
-                .expiresAt(now.plus(TimeExpires, ChronoUnit.MINUTES))
-                .subject(username)
-                .claim("scope", scope)
-                .claim("id", idUser)
-                .build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    private String createToken(Map<String, Object> claims, String username) {
+        return BEARER_SPACE + Jwts.builder()
+            .setClaims(claims)
+            .setSubject(username)
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(new Date(System.currentTimeMillis()+1000*60*1))
+            .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 
-    /**
-     * Decode jwt.
-     *
-     * @param token String
-     * @return Jwt
-     * */
-    public Jwt deJwt(String token) {
-        JwtDecoder decoder = NimbusJwtDecoder.withPublicKey(rsaKeyConfigProperties.publicKey()).build();
-        return decoder.decode(token);
+    private Key getSignKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts
+            .parser()
+            .setSigningKey(getSignKey())
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    private Boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
     }
 
     /**
@@ -114,10 +109,8 @@ public class TokenService {
      * @return String
      * */
     private String extractUsername(String token) {
-        return deJwt(token).getSubject();
+        return extractClaim(token, Claims::getSubject);
     }
-
-
 
     /**
      * Validate time token.
@@ -126,88 +119,6 @@ public class TokenService {
      * @return boolean
      * */
     public boolean validateToken(String token, UserDetails userDetails) {
-        boolean checkExpiredJwt = deJwt(token).getExpiresAt().isBefore(Instant.now());
-        String username = extractUsername(token);
-        if (checkExpiredJwt && userDetails.getUsername().equals(username)) {
-            return true;
-        }
-        return false;
+        return isTokenExpired(token) && userDetails.getUsername().equals(extractUsername(token));
     }
-
-    /**
-     * refesh token.
-     *
-     * @param token String
-     * @return boolean
-     * */
-    public Map<String, String> refeshToken(String refeshToken, String atToken, String userId, UserDetails userDetails) {
-        Map<String, String> listToken = new HashMap<>();
-        String sub = "sub";
-        String id = "id";
-        String scope = "scope";
-        refeshToken = naturalVersionToken(refeshToken);
-        atToken = naturalVersionToken(atToken);
-        // check refesh token
-        try {
-            if (validateToken(refeshToken, userDetails)) {
-                Jwt jwt = deJwt(refeshToken);
-                Collection<GrantedAuthority> roles = convertScope((List<String>) jwt.getClaims().get(scope));
-                listToken.put("rf", refreshTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
-                    String.valueOf(jwt.getClaims().get(sub)), TimeConstant.minuteRf));
-            }
-        } catch (JwtValidationException e) {
-            if (e.getMessage().contains("expired")) {
-                User user = userService.getUserById(id);
-                listToken.put("rf", refreshTokenExpires(null, user.getUserId(),
-                    user.getUsername(), TimeConstant.minuteRf));
-            }
-        }
-
-        // check access token
-        try {
-            if (validateToken(atToken, userDetails)) {
-                Jwt jwt = deJwt(atToken);
-                Collection<GrantedAuthority> roles = convertScope((List<String>) jwt.getClaims().get(scope));
-                listToken.put("Authorization", refreshTokenExpires(roles, String.valueOf(jwt.getClaims().get(id)),
-                    String.valueOf(jwt.getClaims().get(sub)), TimeConstant.minuteAt));
-            }
-        } catch (JwtValidationException e) {
-            if (e.getMessage().contains("expired")) {
-                User user = userService.getUserById(id);
-                listToken.put("Authorization", refreshTokenExpires(null, user.getUserId(),
-                        user.getUsername(), TimeConstant.minuteAt));
-            }
-        }
-
-        return listToken;
-    }
-
-    /**
-     * Remove Bearer.
-     *
-     * @param token String
-     * @return String
-     * */
-    public String naturalVersionToken(String token) {
-        if (Utils.isEmpty(token)) {
-            return null;
-        }
-        return token.replace(BEARER_SPACE, "");
-    }
-
-    private Collection<GrantedAuthority> convertScope(List<String> scopes) {
-        Collection<GrantedAuthority> roles = new ArrayList<>();
-        for (String roleItem : scopes) {
-            GrantedAuthority grantedAuthority = new GrantedAuthority() {
-                @Override
-                public String getAuthority() {
-                    return roleItem;
-                }
-            };
-            roles.add(grantedAuthority);
-        }
-        return roles;
-    }
-
-
 }
