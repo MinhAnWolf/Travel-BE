@@ -1,6 +1,7 @@
 package com.vocation.travel.security;
 
 import com.vocation.travel.common.constant.TimeConstant;
+import com.vocation.travel.common.enumerator.CommonEnum;
 import com.vocation.travel.entity.User;
 import com.vocation.travel.repository.UserRepository;
 import com.vocation.travel.security.config.RsaKeyConfigProperties;
@@ -62,7 +63,7 @@ public class TokenService {
      * @param username String
      * @return String
      * */
-    public String generateToken(String username){
+    public String generateToken(String username, String typeToken){
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, username);
     }
@@ -119,6 +120,6 @@ public class TokenService {
      * @return boolean
      * */
     public boolean validateToken(String token, UserDetails userDetails) {
-        return isTokenExpired(token) && userDetails.getUsername().equals(extractUsername(token));
+        return isTokenExpired(token) && !userDetails.getUsername().equals(extractUsername(token));
     }
 }
