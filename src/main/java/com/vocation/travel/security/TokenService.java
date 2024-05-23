@@ -1,31 +1,17 @@
 package com.vocation.travel.security;
 
-import com.vocation.travel.common.constant.TimeConstant;
 import com.vocation.travel.common.enumerator.CommonEnum;
-import com.vocation.travel.entity.User;
 import com.vocation.travel.repository.UserRepository;
 import com.vocation.travel.security.config.RsaKeyConfigProperties;
 import com.vocation.travel.service.UserService;
-import com.vocation.travel.util.Utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -41,9 +27,6 @@ import io.jsonwebtoken.security.Keys;
 @Log4j2
 @Service
 public class TokenService {
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Autowired
     private UserRepository userRepository;
 
@@ -65,10 +48,13 @@ public class TokenService {
      * */
     public String generateToken(String username, String typeToken){
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
+        if (Objects.equals(typeToken, CommonEnum.typeToken.ACCESS)) {
+            return createToken(claims, username, +1000*60*1);
+        }
+        return createToken(claims, username, +10000*600*2);
     }
 
-    private String createToken(Map<String, Object> claims, String username) {
+    private String createToken(Map<String, Object> claims, String username, int timeExpiration) {
         return BEARER_SPACE + Jwts.builder()
             .setClaims(claims)
             .setSubject(username)

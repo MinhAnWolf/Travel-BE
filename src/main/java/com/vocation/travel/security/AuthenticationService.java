@@ -2,6 +2,7 @@ package com.vocation.travel.security;
 
 import com.vocation.travel.common.Log;
 import com.vocation.travel.common.constant.TimeConstant;
+import com.vocation.travel.common.enumerator.CommonEnum;
 import com.vocation.travel.dto.AuthDTO.LoginRequest;
 import com.vocation.travel.dto.AuthDTO.Response;
 import com.vocation.travel.dto.UsersDTO;
@@ -55,8 +56,8 @@ public class AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         AuthUser userDetails = (AuthUser) authentication.getPrincipal();
         String idU = userDetails.getUser().getUserId();
-        String atToken = tokenService.generateToken(userDetails.getUsername());
-        String rfToken = tokenService.generateToken(userDetails.getUsername());
+        String atToken = tokenService.generateToken(userDetails.getUsername(), CommonEnum.typeToken.ACCESS.name());
+        String rfToken = tokenService.generateToken(userDetails.getUsername(), CommonEnum.typeToken.RF.name());
         Response response = new Response("User logged in successfully", atToken, rfToken, idU);
         Log.debugLog("Response: ", response);
         Log.endLog(SERVICE_NAME, METHOD);

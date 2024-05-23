@@ -1,5 +1,6 @@
 package com.vocation.travel.security;
 
+import com.vocation.travel.common.enumerator.CommonEnum;
 import com.vocation.travel.entity.Token;
 import com.vocation.travel.repository.UserRepository;
 import com.vocation.travel.service.serviceImpl.internal.StorageTokenServiceImpl;
@@ -22,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@Component
 public class FilterService extends OncePerRequestFilter {
     private final String REFRESH = "rf";
     private final String AUTHORIZATION = "Authorization";
@@ -74,7 +74,7 @@ public class FilterService extends OncePerRequestFilter {
         }
 
         // Check token
-        if(Utils.isEmpty(UID) && SecurityContextHolder.getContext().getAuthentication() == null){
+        if(!Utils.isEmpty(UID) && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = getUserDetailsByUid(UID);
             List<Token> listToken = new ArrayList<>();
             Token token = new Token();
@@ -85,25 +85,27 @@ public class FilterService extends OncePerRequestFilter {
             // Check token, if token expired then re-generate token and add header response
             for (Token itemToken: listToken) {
                 // Check access token occur then check refresh token
-                if(tokenService.validateToken(itemToken.getAccess(), userDetails)){
-                    if(!tokenService.validateToken(itemToken.getAccess(), userDetails)){
-                        // check refresh token
-                        Token tokenGetByAccess =  storageToken.read(itemToken);
+                if(tokenService.validateToken(itemToken.getAccess(), userDetails)) {
+                    if(!tokenService.validateToken(itemToken.getRefresh(), userDetails)){
+                        // get refresh token
+                        Token tokenGetByAccess = storageToken.read(itemToken);
                         if (!Utils.objNull(tokenGetByAccess)
-                            || !Utils.isEmpty(tokenGetByAccess.getRefresh())
-                            || Objects.equals(tokenGetByAccess.getRefresh(), tokenRf)) {
-                            tokenService.generateToken()
-                            if (Utils.isEmpty(responseRf)) {
-                                addHeader(listToken, uid, response);
-                            }
+                            && !Utils.isEmpty(tokenGetByAccess.getRefresh())
+                            && Objects.equals(tokenGetByAccess.getRefresh(), tokenRf)) {
+                            reNewToken.put(REFRESH, tokenService.generateToken(userDetails.getUsername(),
+                                    CommonEnum.typeToken.RF.name()));
+                            reNewToken.put(AUTHORIZATION, tokenService.generateToken(userDetails.getUsername(),
+                                    CommonEnum.typeToken.ACCESS.name()));
+                                addHeader(reNewToken, uid, response);
                         }
                     }
-
+                } else {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
                 }
             }
             setSecurityContextHolder(userDetails, request);
         }
-
         filterChain.doFilter(request, response);
     }
 
