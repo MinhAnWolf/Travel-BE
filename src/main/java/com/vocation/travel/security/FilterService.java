@@ -5,15 +5,18 @@ import com.vocation.travel.entity.Token;
 import com.vocation.travel.repository.UserRepository;
 import com.vocation.travel.service.serviceImpl.internal.StorageTokenServiceImpl;
 import com.vocation.travel.util.Utils;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.io.IOException;
@@ -23,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@Service
 public class FilterService extends OncePerRequestFilter {
     private final String REFRESH = "rf";
     private final String AUTHORIZATION = "Authorization";
@@ -74,8 +78,8 @@ public class FilterService extends OncePerRequestFilter {
         }
 
         // Check token
-        if(!Utils.isEmpty(UID) && SecurityContextHolder.getContext().getAuthentication() == null){
-            UserDetails userDetails = getUserDetailsByUid(UID);
+        if(!Utils.isEmpty(UID) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = getUserDetailsByUid(uid);
             List<Token> listToken = new ArrayList<>();
             Token token = new Token();
             token.setAccess(tokenAuthorization);
@@ -84,25 +88,50 @@ public class FilterService extends OncePerRequestFilter {
             Map<String, String> reNewToken = new HashMap<>();
             // Check token, if token expired then re-generate token and add header response
             for (Token itemToken: listToken) {
-                // Check access token occur then check refresh token
-                if(tokenService.validateToken(itemToken.getAccess(), userDetails)) {
-                    if(!tokenService.validateToken(itemToken.getRefresh(), userDetails)){
-                        // get refresh token
-                        Token tokenGetByAccess = storageToken.read(itemToken);
+                try {
+                    // Check access token occur then check refresh token
+                   if (tokenService.validateToken(itemToken.getAccess(), userDetails)) {
+                       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                       return;
+                   }
+                // catch for access expired
+                } catch (ExpiredJwtException e) {
+                    // Get token from database
+                    Token tokenGetByAccess = storageToken.read(itemToken);
+                    try {
+                        // Check refresh token
+                        if(tokenService.validateToken(itemToken.getRefresh(), userDetails)) {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            return;
+                        } else {
+                            // when refresh token not refresh expired
+                            if (Objects.equals(tokenGetByAccess.getRefresh(), tokenRf)) {
+                                reNewToken.put(AUTHORIZATION, tokenService.generateToken(userDetails.getUsername(),
+                                    CommonEnum.typeToken.ACCESS.name()));
+                            } else {
+                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                return;
+                            }
+                        }
+                    // catch for refresh expired
+                    } catch (ExpiredJwtException ex) {
+                        // generate refresh token and access token when refresh expired
                         if (!Utils.objNull(tokenGetByAccess)
                             && !Utils.isEmpty(tokenGetByAccess.getRefresh())
                             && Objects.equals(tokenGetByAccess.getRefresh(), tokenRf)) {
                             reNewToken.put(REFRESH, tokenService.generateToken(userDetails.getUsername(),
-                                    CommonEnum.typeToken.RF.name()));
+                                CommonEnum.typeToken.RF.name()));
                             reNewToken.put(AUTHORIZATION, tokenService.generateToken(userDetails.getUsername(),
-                                    CommonEnum.typeToken.ACCESS.name()));
-                                addHeader(reNewToken, uid, response);
+                                CommonEnum.typeToken.ACCESS.name()));
+                        } else {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            return;
                         }
                     }
-                } else {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
                 }
+            }
+            if (!reNewToken.isEmpty()) {
+                addHeader(reNewToken, uid, response);
             }
             setSecurityContextHolder(userDetails, request);
         }

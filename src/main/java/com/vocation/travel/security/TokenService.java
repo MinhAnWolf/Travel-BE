@@ -4,6 +4,7 @@ import com.vocation.travel.common.enumerator.CommonEnum;
 import com.vocation.travel.repository.UserRepository;
 import com.vocation.travel.security.config.RsaKeyConfigProperties;
 import com.vocation.travel.service.UserService;
+import com.vocation.travel.util.Utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -106,6 +107,20 @@ public class TokenService {
      * @return boolean
      * */
     public boolean validateToken(String token, UserDetails userDetails) {
-        return isTokenExpired(token) && !userDetails.getUsername().equals(extractUsername(token));
+        String naturalToken = naturalVersionToken(token);
+        return isTokenExpired(naturalToken) && !userDetails.getUsername().equals(extractUsername(naturalToken));
+    }
+
+    /**
+     * Remove Bearer.
+     *
+     * @param token String
+     * @return String
+     * */
+    private String naturalVersionToken(String token) {
+        if (Utils.isEmpty(token)) {
+            return null;
+        }
+        return token.replace("Bearer ", "");
     }
 }
