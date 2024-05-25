@@ -26,7 +26,16 @@ public class StorageTokenServiceImpl implements CRUD<Token, Token> {
 
   @Override
   public Token create(Token request) {
-    tokenRepository.save(request);
+    Log.startLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
+    Log.inputLog(request);
+    checkInputParams(request);
+    try {
+      tokenRepository.save(request);
+      Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
+    } catch (Exception e) {
+      Log.errorLog(e);
+      Log.endLog(SERVICE_NAME, CommonConstant.METHOD_CREATE);
+    }
     return null;
   }
 
@@ -54,6 +63,16 @@ public class StorageTokenServiceImpl implements CRUD<Token, Token> {
 
   @Override
   public Token update(Token request) {
+    Log.startLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
+    Log.inputLog(request);
+    checkInputParams(request);
+    try {
+      tokenRepository.save(request);
+      Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
+    } catch (Exception e) {
+      Log.errorLog(e);
+      Log.endLog(SERVICE_NAME, CommonConstant.METHOD_UPDATE);
+    }
     return null;
   }
 

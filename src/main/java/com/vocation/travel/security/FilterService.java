@@ -131,6 +131,15 @@ public class FilterService extends OncePerRequestFilter {
                 }
             }
             if (!reNewToken.isEmpty()) {
+                Token getToken = storageToken.update(storageToken.read(new Token(tokenRf)));
+                if (!reNewToken.get(tokenAuthorization).isEmpty()) {
+                    getToken.setAccess(reNewToken.get(tokenAuthorization));
+                }
+
+                if (!reNewToken.get(tokenRf).isEmpty()) {
+                    getToken.setRefresh(reNewToken.get(tokenRf));
+                }
+                storageToken.update(getToken);
                 addHeader(reNewToken, uid, response);
             }
             setSecurityContextHolder(userDetails, request);
