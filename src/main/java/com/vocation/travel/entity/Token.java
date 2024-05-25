@@ -22,4 +22,8 @@ public class Token {
   private String id;
   private String access;
   private String refresh;
+
+  public Token(String id) {
+    this.id = id;
+  }
 }
